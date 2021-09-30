@@ -8,4 +8,4 @@ HTML, Javascript ed Ajax.
 
 ###### Progetti: 
 
- (vedi omonime repository).
+Angular (vedi omonime repository).
