@@ -3,7 +3,7 @@ import * as _http from "http";
 import * as _url from "url";
 import * as _fs from "fs";
 import * as _mime from "mime";
-import * as _querystring from "query-string";
+import * as _querystring from "query-string"; //Fa il parsing di una query URL-ENCODED
 let HEADERS= require("./headers.json");
 let paginaErrore : string;
 class Dispatcher{
@@ -37,60 +37,72 @@ class Dispatcher{
     dispatch(req,res)
     {
         let metodo=req.method.toUpperCase();
-        if(metodo="GET")
+        if(metodo=="GET")
         {
-            innerDispatch(req,res); //Se si tratta di una funzione esterna, il ".this" non ci vuole
+            this.innerDispatch(req,res); //Se si tratta di una funzione interna,ci vuole il ".this"
         }
         else
         {
-            let parametriBody="";
+            let parametriBody:string="";
             req.on("data", function(data)
             {
                 parametriBody +=data;
             })
             let parametriJSON={};
+            //Puntatore alla classe "this": si riferisce a req
+            let _this=this;
             req.on("end",function(){
-                try{
-                    //Se i parametri sono in formato JSON, la conversione va a buon fine, altrimenti significa che sono URL-ENCODED e passo nel catch
+                try
+                {
+                    //Se i parametri, presenti nel body, sono in formato JSON, la conversione va a buon fine; altrimenti significa che sono URL-ENCODED e passo nel catch
+                    //JSON
                     parametriJSON=JSON.parse(parametriBody);
                 }
                 catch(error)
-                {
+                {   //URL-ENCODED
                     parametriJSON=_querystring.parse(parametriBody);
+                }
+                finally
+                {
+                    //Salviamo i parametri in un campo, dove il chiamante li potrà ottenere
+                    req["BODY"]=parametriJSON;
+                    _this.innerDispatch(req,res);
                 }
             })
         }
     }
-}
-function innerDispatch(req,res)
-{
-    //Lettura di metodo risorsa e parametri
-    let metodo=req.method;
-    let url=_url.parse(req.url,true);
-    let risorsa=url.pathname;
-    let parametri=url.query;
-    req["GET"]=parametri;
-    console.log(`${this.prompt} ${metodo}: ${risorsa} ${JSON.stringify(parametri)}`);
-    if (risorsa.startsWith("/api/")) //Se la richiesta inizia per "/api/", si tratta di un servizio, altrimenti, si tratta di una pagina
+    innerDispatch(req,res)
     {
-        if(risorsa in this.listeners[metodo])
+        //Lettura di metodo risorsa e parametri
+        let metodo=req.method;
+        let url=_url.parse(req.url,true);
+        let risorsa=url.pathname;
+        let parametri=url.query;
+        req["GET"]=parametri;
+        console.log(`${this.prompt} ${metodo}: ${risorsa} ${JSON.stringify(parametri)}`);
+        if(req["BODY"])
+        console.log(`${JSON.stringify(req["BODY"])}`);
+        if (risorsa.startsWith("/api/")) //Se la richiesta inizia per "/api/", si tratta di un servizio, altrimenti, si tratta di una pagina
         {
-            let _callback=this.listeners[metodo][risorsa];
-            _callback(req,res); //Lancio in esecuzione la callback interna a listeners
-        }    
+            if(risorsa in this.listeners[metodo])
+            {
+                let _callback=this.listeners[metodo][risorsa];
+                _callback(req,res); //Lancio in esecuzione la callback interna a listeners
+            }    
+            else
+            {
+                //Il client si aspett un JSON: in caso di errore, al posto del JSON, restituiamo una stringa
+                res.writeHead(404,HEADERS.text);
+                res.write("Servizio non trovato");
+                res.end();
+            }
+        }
         else
         {
-            //Il client si aspett un JSON: in caso di errore, al posto del JSON, restituiamo una stringa
-            res.writeHead(404,HEADERS.text);
-            res.write("Servizio non trovato");
-            res.end();
+            staticListener(req,res,risorsa);
         }
-    }
-    else
-    {
-        staticListener(req,res,risorsa);
-    }
-}  
+    }  
+}
 function staticListener(req,res,risorsa)
 {
     if(risorsa=="/")
