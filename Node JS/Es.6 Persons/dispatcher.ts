@@ -4,9 +4,9 @@ import * as _url from "url";
 import * as _fs from "fs";
 import * as _mime from "mime";
 import * as _querystring from "query-string"; //Fa il parsing di una query URL-ENCODED
-let HEADERS= require("./headers.json");
+import {HEADERS} from "./headers";
 let paginaErrore : string;
-class Dispatcher{
+export class Dispatcher{
     prompt:string=">>> "
     //Ogni listeners è costituito da un json del tipo {"risorsa":callback}; sono suddivisi in base al metodo di chiamata
     listeners:any={ //Any -> Qualunque tipo
@@ -142,4 +142,3 @@ function init()
         }
     });    
 }
-module.exports=new Dispatcher();
