@@ -3,27 +3,28 @@ import * as _http from "http";
 import * as _url from "url";
 import * as _fs from "fs";
 import * as _mime from "mime";
-import * as _querystring from "query-string"; //Fa il parsing di una query URL-ENCODED
-let HEADERS= require("./headers.json");
+import * as _querystring from "query-string"; //Fa il parsing di una query URL-ENCODED(cioè dei parametri, per estrarli correttamente)
+import HEADERS from "./headers.json";
 let paginaErrore : string;
-class Dispatcher{
-    prompt:string=">>> "
+export class Dispatcher{
+    prompt:string=">>> "; //Prompt personalizzato
     //Ogni listeners è costituito da un json del tipo {"risorsa":callback}; sono suddivisi in base al metodo di chiamata
-    listeners:any={ //Any -> Qualunque tipo
+    listeners:any={ //Any -> Qualunque tipo  //Il listener contiene la definizione di tutti i metodi
         "GET":{},
         "POST":{},
         "DELETE":{},
         "PUT":{},
         "PATCH":{}
     } 
-    constructor()
+    constructor()//Richiamato quando si fa l'istanza della classe
     {
-        init();
+        init();//Inizializzazione pagina d'errore
     }
-    addListener(metodo:string,risorsa:string,callback:any)
+    addListener(metodo:string,risorsa:string,callback:any) //Aggancia un metodo ed una risorsa ad una funzione
     {
-        metodo=metodo.toUpperCase(); 
-        if (this.listeners[metodo]) //Usare sempre il this in questi casi
+        metodo=metodo.toUpperCase();
+        //Controllo se è presente il metodo richiesto: Metodo tra [], perchè abbiamo un array associativo 
+        if (this.listeners[metodo]) //Usare sempre il this in questi casi: si riferisce all'istanza corrente della classe
         { 
             this.listeners[metodo][risorsa]=callback; //Creazione di una chiave con valore callback
         }
@@ -39,18 +40,17 @@ class Dispatcher{
         let metodo=req.method.toUpperCase();
         if(metodo=="GET")
         {
-            this.innerDispatch(req,res); //Se si tratta di una funzione interna,ci vuole il ".this"
+            this.innerDispatch(req,res); //Se si tratta di una funzione interna alla classe,ci vuole il ".this"
         }
         else
         {
-            let parametriBody:string="";
+            let parametriBody:string=""; //Perchè solo con il get i parametri non sono nel body
             req.on("data", function(data)
             {
                 parametriBody +=data;
             })
             let parametriJSON={};
-            //Puntatore alla classe "this": si riferisce a req
-            let _this=this;
+            let _this=this;//Puntatore alla classe corrente "Dispatcher"
             req.on("end",function(){
                 try
                 {
@@ -80,18 +80,18 @@ class Dispatcher{
         let parametri=url.query;
         req["GET"]=parametri;
         console.log(`${this.prompt} ${metodo}: ${risorsa} ${JSON.stringify(parametri)}`);
-        if(req["BODY"])
-        console.log(`${JSON.stringify(req["BODY"])}`);
+        if(req["BODY"])//Controllo se è presente la chiave "BODY" nell'oggetto request(req)
+            console.log(`${JSON.stringify(req["BODY"])}`);
         if (risorsa.startsWith("/api/")) //Se la richiesta inizia per "/api/", si tratta di un servizio, altrimenti, si tratta di una pagina
         {
-            if(risorsa in this.listeners[metodo])
+            if(risorsa in this.listeners[metodo])//Controllo i valori della chiave metodo
             {
-                let _callback=this.listeners[metodo][risorsa];
+                let _callback=this.listeners[metodo][risorsa];//Carico nella callback la funzione abbinata alla risorsa
                 _callback(req,res); //Lancio in esecuzione la callback interna a listeners
             }    
             else
             {
-                //Il client si aspett un JSON: in caso di errore, al posto del JSON, restituiamo una stringa
+                //Il client si aspetta un JSON: in caso di errore, al posto del JSON, restituiamo una stringa
                 res.writeHead(404,HEADERS.text);
                 res.write("Servizio non trovato");
                 res.end();
@@ -142,4 +142,3 @@ function init()
         }
     });    
 }
-module.exports=new Dispatcher();
