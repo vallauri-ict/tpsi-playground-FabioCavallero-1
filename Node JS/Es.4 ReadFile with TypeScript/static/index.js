@@ -7,7 +7,7 @@ $(document).ready(function() {
         });
     });
     $("#btnInvia2").on("click", function() {
-        let request = inviaRichiesta("get", "/api/servizio2", {"nome":"pippo"});
+        let request = inviaRichiesta("get", "/api/servizio2", {"nome":"Dico"});
         request.fail(errore);
         request.done(function(data) {
             alert(JSON.stringify(data));

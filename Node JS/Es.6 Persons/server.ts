@@ -1,5 +1,5 @@
 import * as _http from "http";
-import {HEADERS} from "./headers";
+import {HEADERS} from "./headers"; //Esporto la costante a cui è stato assegnato quel determinato json
 import {Dispatcher} from "./dispatcher";
 import {persons} from "./persons";
 let port: number=1337;
@@ -16,7 +16,7 @@ dispatcher.addListener("GET","/api/nazioni",function(req,res)
     let nazioni=[];
     for (const person of persons["results"]) 
     {
-        if (!nazioni.includes(person.location.country)) 
+        if (!nazioni.includes(person.location.country)) //Se non è già presente il campo, lo carichiamo
         {
             nazioni.push(person.location.country);   
         }   
@@ -85,7 +85,7 @@ dispatcher.addListener("DELETE","/api/elimina",function(req,res){
     }
     if (trovato) 
     {
-        persons.results.splice(i,1);
+        persons.results.splice(i,1);//Prendo dal vettore gli elementi a partire dalla posizione i(in questo caso 1 solo)
         res.writeHead(200,HEADERS.json); /*Quando mandiamo indietro 200, deve essere sempre .json (json serializzato)*/
         res.write(JSON.stringify("Record cancellato correttamente"));
         res.end();

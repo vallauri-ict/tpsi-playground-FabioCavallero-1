@@ -1,10 +1,13 @@
-"use strict"
-import * as _http from "http";
+//Node.js si aspetta sempre un file javascript  
+//Nodemon permette l'esecuzione del file typescript
+//nodemon server.ts -> per runnare il file
+"use strict" 
+import * as _http from "http"; //Importo tutti i moduli della libreria
 import * as _url from "url";
-import * as _fs from "fs"; //fs->File system
+import * as _fs from "fs";
 import * as _mime from "mime";
-const HEADERS = require("./headers.json")
-const PORT: number = 1337;
+const HEADERS = require("./headers.json") //Qui usiamo la require perchè non abbiamo un modulo, ma un file con un json
+const PORT: number = 1337; //Specifichiamo il tipo della variabile
 let paginaErrore: string;
 var server = _http.createServer(function(req, res) {
     let metodo=req.method;
@@ -14,7 +17,7 @@ var server = _http.createServer(function(req, res) {
     console.log(`Richiesta: ${metodo}:${risorsa}, param: ${JSON.stringify(parametri)}`);
     if(risorsa=="/")
         risorsa="/index.html";
-    if(!risorsa.startsWith("/api/"))
+    if(!risorsa.startsWith("/api/"))//Se la risorsa inizia con /api/ è un servizio
     {
         risorsa="./static"+risorsa;
         _fs.readFile(risorsa,function(error,data){

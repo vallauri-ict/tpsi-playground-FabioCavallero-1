@@ -10,6 +10,7 @@ $(document).ready(function() {
     requestNazioni.done(function(data)
     {
         for (let i=0;i<data.nazioni.length;i++) {
+            //Creazione del tag a
             $('<a>',{
                 'class':'dropdown-item',
                 'href':'#',
