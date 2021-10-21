@@ -1,61 +1,73 @@
-import * as _http from "http";
-import { json } from "stream/consumers";
+import * as http from "http";
+import * as fs from "fs";
 import HEADERS from "./headers.json";
-import {Dispatcher} from "./dispatcher";
-import states from "./states.json";
-import radios from "./radios.json";
-import * as _fs from "fs";
-let port:number=1337;
-let dispatcher:Dispatcher=new Dispatcher();
-let server=_http.createServer(function(req,res){
-    dispatcher.dispatch(req,res);
-})
-server.listen(port);
-console.log("Server in ascolto sulla porta "+port);
+import { Dispatcher } from "./dispatcher";
+let dispatcher:Dispatcher = new Dispatcher();
+const PORT:number = 1337;
+let server = http.createServer((req:any, res:any) => {
+    dispatcher.dispatch(req, res);
+});
+server.listen(PORT);
+console.log("Server in ascolto sulla porta " + PORT);
 //Registrazione servizi
-dispatcher.addListener("GET","/api/elenco",function(req,res){
-    res.writeHead(200,HEADERS.json);
-    res.write(JSON.stringify(states));
-    res.end();
-})
-dispatcher.addListener("POST","/api/radios",function(req,res){
-    let regione=req["BODY"].regione;
-    let radioRegione=[];
-    if(regione!="tutti"){
-        for (const radio of radios) {
-            if(radio.state==regione){
-                radioRegione.push(radio)
+dispatcher.addListener("GET", "/api/elenco", (req, res) => {
+    fs.readFile("./states.json", (err, data) => {
+        if (err) {
+            console.error("ERROR: " + err);
+        } else {
+            let regioni = [];
+            for (const item of JSON.parse(data.toString())) {
+                regioni.push(item.name);
             }
+            res.writeHead(200, HEADERS.json);
+            res.end(JSON.stringify({
+                "regioni": regioni,
+            }));
         }
-    }
-    else{
-        for (const radio of radios) {
-                radioRegione.push(radio)
-        }
-    }
-    res.writeHead(200,HEADERS.json);
-    res.write(JSON.stringify(radioRegione));
-    res.end();
-})
-dispatcher.addListener("POST","/api/like",function(req,res){
-    let idLike=req["BODY"].id;
-    for (const radio of radios) {
-        if(radio.id==idLike){
-            let nLike = parseInt(radio.votes);
-            nLike++;
-            radio.votes = nLike.toString();
-            _fs.writeFile("./radios.json",JSON.stringify(radios),function(err){
-                if(err){
-                    res.writeHead(404, HEADERS.text);
-                    res.write(err);
+    });
+});
+dispatcher.addListener("POST", "/api/radios", (req, res) => {
+    let param = req["BODY"].name;
+    fs.readFile("./radios.json", (err, data) => {
+        if (err) {
+            console.error("ERROR: " + err);
+        } else {
+            let radios = [];
+            for (const radio of JSON.parse(data.toString())) {
+                if (radio.state == param) {
+                    radios.push(radio);                    
                 }
-                else{
-                    res.writeHead(200, HEADERS.json);
-                    res.write(JSON.stringify(radio.votes));
-                }
-                res.end();
-            })
-            break;
+            }
+            res.writeHead(200, HEADERS.json);
+            res.end(JSON.stringify({
+                "radios": radios, 
+            }));
         }
-    }
-})
+    });
+});
+dispatcher.addListener("POST", "/api/like", (req, res) => {
+    let param = req["BODY"].id;
+    fs.readFile("./radios.json", (err, data) => {
+        if (err) {
+            console.error("ERROR: " + err);
+        } else {
+            for (const radio of JSON.parse(data.toString())) {
+                if (radio.id == param) {
+                    radio.votes = (parseInt(radio.votes) + 1).toString();                    
+                    fs.writeFile("./radios.json", JSON.stringify(JSON.parse(data.toString())), (err) => {
+                        if (err) {
+                            res.writeHead(500, HEADERS.text);
+                            res.end(JSON.stringify("File non salvato correttamente"));
+                        } else {
+                            res.writeHead(200, HEADERS.text);
+                            res.end(JSON.stringify("File salvato correttamente"));
+                        }
+                    });
+                    break;
+                }
+            }
+            res.writeHead(500, HEADERS.text);
+            res.end(JSON.stringify("Id non trovato"));
+        }
+    });
+});

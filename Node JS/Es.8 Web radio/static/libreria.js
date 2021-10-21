@@ -1,11 +1,13 @@
 "use strict";
 
+const PHP = false;
+
 function inviaRichiesta(method, url, parameters={}) {
 	let contentType;
-	if(method.toUpperCase()=="GET")
+	if(method.toUpperCase()=="GET" || PHP)
 		contentType="application/x-www-form-urlencoded;charset=utf-8";
 	else{
-		contentType = "application/json; charset=utf-8"
+		contentType = "application/json; charset=utf-8";
         parameters = JSON.stringify(parameters);
 	}
     return $.ajax({
@@ -21,10 +23,14 @@ function inviaRichiesta(method, url, parameters={}) {
 function errore(jqXHR, text_status, string_error) {
     if (jqXHR.status == 0)
         alert("Connection Refused or Server timeout");
-	else if (jqXHR.status == 200)
+	else if (jqXHR.status == 200) {
+        // anche se è codice 200 può essere che abbia failato in quanto può 
+        // aver ricevuto una stringa da convertire in json, ma formattata male
+        // quindi fallisce la conversione
         alert("Formato dei dati non corretto : " + jqXHR.responseText);
+    }
 	else if (jqXHR.status == 403)
-        window.location.href = "login.html"
+        window.location.href = "login.html";
     else
         alert("Server Error: " + jqXHR.status + " - " + jqXHR.responseText);
 }
