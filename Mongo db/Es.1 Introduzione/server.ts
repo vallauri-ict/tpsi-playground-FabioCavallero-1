@@ -1,20 +1,7 @@
-import * as _http from "http";
-import HEADERS from "./headers.json"; //Esportazione il file .json
-import {Dispatcher} from "./dispatcher"; //Esportazione la classe Dispatcher
 import * as _mongodb from "mongodb";
 const mongoClient =_mongodb.MongoClient;
-//Creazione server http
-/*const port: number=1337;
-const dispatcher:Dispatcher=new Dispatcher();//Istanzio la classe Dispatcher, così utilizzo dal server tutti i metodi delle classe Dispatcher
-const server=_http.createServer(function(req,res) //Routine che risponde alle richieste
-{
-    dispatcher.dispatch(req,res); //Cuore del sistema: registra nella variabile listeners tutte le richieste del client e fornirle a quest'ultimo
-});
-server.listen(port);
-console.log("Server in ascolto sulla porta "+port);*/
-//Registrazione servizi
-//Se il server da come risultato undefined, è andato tutto bene
 //Modello di accesso al database
+//Se il server da come risultato undefined, è andato tutto bene
 const CONNECTIONSTRING="mongodb://127.0.0.1:27017";
 mongoClient.connect(CONNECTIONSTRING,function(err,client){
     if(!err)
@@ -33,7 +20,7 @@ mongoClient.connect(CONNECTIONSTRING,function(err,client){
     else
         console.log("Errore nella connessione al database"+err.message);
 });
-//Inserimento di un nuovo record
+//INSERT di un record
 mongoClient.connect(CONNECTIONSTRING,function(err,client){
     if(!err)
     {
@@ -51,7 +38,7 @@ mongoClient.connect(CONNECTIONSTRING,function(err,client){
     else
         console.log("Errore nella connessione al database"+err.message);
 });
-//UPDATE
+//UPDATE di un record
 mongoClient.connect(CONNECTIONSTRING,function(err,client){
     if(!err)
     {
@@ -69,7 +56,7 @@ mongoClient.connect(CONNECTIONSTRING,function(err,client){
     else
         console.log("Errore nella connessione al database"+err.message);
 });
-//DELETEMANY
+//DELETE di un record
 mongoClient.connect(CONNECTIONSTRING,function(err,client){
     if(!err)
     {
