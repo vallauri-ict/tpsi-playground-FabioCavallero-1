@@ -1,14 +1,14 @@
-import * as _mongodb from "mongodb";
-const mongoClient =_mongodb.MongoClient;
+import * as _mongodb from "mongodb"; //Classe mongo
+const mongoClient =_mongodb.MongoClient; //Client x connessione al db
 //Modello di accesso al database
 //Se il server da come risultato undefined, è andato tutto bene
 const CONNECTIONSTRING="mongodb://127.0.0.1:27017";
 mongoClient.connect(CONNECTIONSTRING,function(err,client){
     if(!err)
     {
-        let db=client.db("Students");
-        let collection=db.collection("Studenti");
-        //Record restituiti sotto forma di array enumerativo
+        let db=client.db("5B");
+        let collection=db.collection("Students"); //Collection -> tabelle del db
+        //Record restituiti sotto forma di array enumerativo: controllo che la collezione sia presente nel db
         collection.find().toArray(function(err,data){ 
             if(!err)
                 console.log("FIND",data);
@@ -24,8 +24,8 @@ mongoClient.connect(CONNECTIONSTRING,function(err,client){
 mongoClient.connect(CONNECTIONSTRING,function(err,client){
     if(!err)
     {
-        let db=client.db("Students");
-        let collection=db.collection("Studenti");
+        let db=client.db("5B");
+        let collection=db.collection("Students");
         let student={"Nome":"Fabio","Cognome":"Cavallero","Indirizzo":"Informatica","Hobbies":["Calcio","Basket"],"Lavoratore":false,"Residenza":{"Citta":"Bra","Provincia":"Cuneo","CAP":"12042"}};
         collection.insertOne(student,function(err,data){
             if(!err)
@@ -42,8 +42,8 @@ mongoClient.connect(CONNECTIONSTRING,function(err,client){
 mongoClient.connect(CONNECTIONSTRING,function(err,client){
     if(!err)
     {
-        let db=client.db("Students");
-        let collection=db.collection("Studenti");
+        let db=client.db("5B");
+        let collection=db.collection("Students");
         //Come parametri si aspetta un filtro ed un'azione
         collection.updateOne({"Nome":"Mario"},{$set:{"Residenza":"Fossano"}},(function(err,data){ 
             if(!err)
@@ -56,13 +56,12 @@ mongoClient.connect(CONNECTIONSTRING,function(err,client){
     else
         console.log("Errore nella connessione al database"+err.message);
 });
-//DELETE di un record
+//DELETE di più record
 mongoClient.connect(CONNECTIONSTRING,function(err,client){
     if(!err)
     {
-        let db=client.db("Students");
-        let collection=db.collection("Studenti");
-        //Come parametri si aspetta un filtro ed un'azione
+        let db=client.db("5B");
+        let collection=db.collection("Students");
         collection.deleteMany({"Residenza":"Fossano"},(function(err,data){ 
             if(!err)
                 console.log("DELETEMANY",data);
