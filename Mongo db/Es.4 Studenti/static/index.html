@@ -8,12 +8,80 @@
 	<script src="libreria.js"> </script>
 	<script src="index.js"> </script>
 </head>
-<body align="center">
-	<h2>Esercizio 1</h2>		
-	<input type="date" id="dataStart" placeholder="Inserisci data inizio">
-	<input type="date" id="dataEnd" placeholder="Inserisci data fine"> 
-	<br>
-	<br>
-	<input type="button" value="Invia richiesta" id="btnInvia"/>
+<style>
+	h1{
+		text-align:center;
+	}
+	body{
+		background-color:gainsboro;
+	}
+	#wrapper {
+            width: 300px;
+            margin: 20px auto;
+            background-color: #ffa;
+            font-size: 13pt;
+            padding: 20px;
+            padding-left: 35px;
+            font-style: italic;
+            font-weight: bold;
+            border-radius: 15px;
+            border: 1px solid blue;
+        }
+        #wrapper p {
+            width: 250px;
+            margin: 5px 20px;
+            padding: 0px;
+        }
+        #wrapper select {
+            width: 250px;
+            margin: 10px 20px;
+            padding: 5px;
+        }
+	#btnInvia{
+		width: 270px;
+		border:1px solid black;
+		border-radius: 20%;
+	}
+	#btnInvia:hover{
+		background-color: lightskyblue;
+		color:whitesmoke;
+	}
+	#table {
+        background-color: #ddd;
+        margin: 20px auto;
+        padding: 10px;
+        width: 750px;
+        overflow: auto;
+        border-radius: 10px;
+        border: 1px solid blue;
+	}
+	#table th {
+    	border: 1px solid black;
+    }   
+    #table td {
+        text-align: center;
+		border: 1px solid black;
+    }
+</style>
+<body>	
+	<h1>Esercizio 14</h1>
+	<div id="wrapper">
+		Inserisci data iniziale:
+		<input type="date" id="dataStart" placeholder="Inserisci data inizio">
+		<br>
+		<br>
+		Inserisci data finale:
+		<input type="date" id="dataEnd" placeholder="Inserisci data fine">
+		<br>
+		<br>
+		<input type="button" value="invia richiesta" id="btnInvia"/>
+	</div>
+	<table id="table">
+        <thead id="thead">
+			<th width="200"> Studente </th>
+			<th width="100"> Classe </th>
+		</thead>
+        <tbody id="tbody"> </tbody>
+    </table>
 </body>
 </html>

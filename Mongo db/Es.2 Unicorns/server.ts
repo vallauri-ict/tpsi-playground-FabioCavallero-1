@@ -33,7 +33,7 @@ mongoClient.connect(CONNSTRING,function(err,client){
     let collection = db.collection(COLLECTION_NAME);
     collection.find({$and:[{"gender":"m"},{"loves":"grape"},{"vampires" : {$gt:60}}]}).toArray(function(err,data){ //gt -> > lt-> <
       if(!err)
-        console.log("Query 2: " , data);
+        console.log("Query 2" , data);
       else
         console.log("errore esecuzione query " + err.message);
       client.close();
@@ -50,7 +50,7 @@ mongoClient.connect(CONNSTRING,function(err,client){
     let collection = db.collection(COLLECTION_NAME);
     collection.find({$or:[{"gender" : "f"},{"weight" : {$lt:700}}]}).toArray(function(err,data){
       if(!err)
-        console.log("Query 3: " , data);
+        console.log("Query 3" , data);
       else
         console.log("errore esecuzione query " + err.message);
       client.close();
@@ -102,7 +102,7 @@ mongoClient.connect(CONNSTRING,function(err,client){
     let collection = db.collection(COLLECTION_NAME);
     collection.find({$or:[{"hair" : "grey"},{"hair" : "brown"}]}).toArray(function(err,data){
       if(!err)
-        console.log("Query 6 A" , data);
+        console.log("Query 6" , data);
       else
         console.log("errore esecuzione query " + err.message);
       client.close();
@@ -119,7 +119,7 @@ mongoClient.connect(CONNSTRING,function(err,client){
     let collection = db.collection(COLLECTION_NAME);
     collection.find({"hair":{$in:["brown","grey"]}}).toArray(function(err,data){
       if(!err)
-        console.log("Query 6 B" , data);
+        console.log("Query 6 seconda soluzione" , data);
       else
         console.log("errore esecuzione query " + err.message);
       client.close();

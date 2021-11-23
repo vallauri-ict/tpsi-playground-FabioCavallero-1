@@ -16,21 +16,20 @@ console.log("Server in ascolto sulla porta "+port);
 //Registrazione servizi
 dispatcher.addListener("POST","/api/servizio1",function(req,res)//Definisco il collegamento tra la risorsa richiesta e la funzione che dev'essere eseguita
 {
-    let dataStart=req["BODY"].dataStart; //Prendo il campo nome della chiave "BODY"
-    let dataEnd=req["BODY"].dataEnd;
+    let dataStart=new Date(req["BODY"].dataStart); //Prendo il campo nome della chiave "BODY"
+    let dataEnd=new Date(req["BODY"].dataEnd);
     //Query 1
     mongoClient.connect(CONNECTIONSTRING,function(err,client){
         if(!err)
         {
           let db = client.db(DBNAME);
           let collection = db.collection("vallauri");
-          //I nomi dei campi devono essere sempre preceduti dal "$" se sono usati come valore a destra dei ":"
-          collection.find({"$and":[{"$gte":{"dob":dataStart}},{"$lte":{"dob":dataEnd}}]})
+          collection.find({$and:[{dob:{$gte:dataStart,$lte:dataEnd}}]})
           .project({"nome":1, "classe":1})
           .toArray(function(err,data){
               if(!err){
                   res.writeHead(200, HEADERS.json);
-                  res.write(JSON.stringify(data));
+                  res.write(JSON.stringify(data)); //Stringify perchè i dati devono essere sempre spediti come stringa
                   res.end();
               }
               else{
@@ -41,8 +40,7 @@ dispatcher.addListener("POST","/api/servizio1",function(req,res)//Definisco il c
               client.close();
           });
         }
-        else{
+        else
             console.log("Errore nella connessione al DB " + err.message);
-        }
       });
 });
