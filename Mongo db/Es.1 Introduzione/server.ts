@@ -3,6 +3,7 @@ const mongoClient =_mongodb.MongoClient; //Client x connessione al db
 //Modello di accesso al database
 //Se il server da come risultato undefined, è andato tutto bene
 const CONNECTIONSTRING="mongodb://127.0.0.1:27017";
+//Query 4 find di più record
 mongoClient.connect(CONNECTIONSTRING,function(err,client){
     if(!err)
     {
@@ -20,7 +21,7 @@ mongoClient.connect(CONNECTIONSTRING,function(err,client){
     else
         console.log("Errore nella connessione al database"+err.message);
 });
-//INSERT di un record
+//Query 2 insert di un record
 mongoClient.connect(CONNECTIONSTRING,function(err,client){
     if(!err)
     {
@@ -38,7 +39,7 @@ mongoClient.connect(CONNECTIONSTRING,function(err,client){
     else
         console.log("Errore nella connessione al database"+err.message);
 });
-//UPDATE di un record
+//Query 3 update di un record
 mongoClient.connect(CONNECTIONSTRING,function(err,client){
     if(!err)
     {
@@ -56,7 +57,7 @@ mongoClient.connect(CONNECTIONSTRING,function(err,client){
     else
         console.log("Errore nella connessione al database"+err.message);
 });
-//DELETE di più record
+//Query 4 delete di più record
 mongoClient.connect(CONNECTIONSTRING,function(err,client){
     if(!err)
     {

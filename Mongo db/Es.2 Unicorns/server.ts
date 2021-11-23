@@ -5,7 +5,7 @@ const DBNAME = "5B";
 const COLLECTION_NAME= "Unicorns";
 //Esecuzione delle query asincrona, il risultato delle query è sempre ritornato all'interno di un vettore
 //{"chiave":"valore"}
-//Query 1
+//Query 1 trovare gli unicorni che hanno un peso compreso tra 700 e 800
 mongoClient.connect(CONNSTRING,function(err,client){
   if(!err)
   {
@@ -25,7 +25,7 @@ mongoClient.connect(CONNSTRING,function(err,client){
   else
     console.log("Errore nella connessione al database");
 });
-//Query 2
+//Query 2 trovare gli unicorni di genere maschile che amano l’uva e che hanno ucciso più di 60 vampiri
 mongoClient.connect(CONNSTRING,function(err,client){
   if(!err)
   {
@@ -42,7 +42,7 @@ mongoClient.connect(CONNSTRING,function(err,client){
   else
     console.log("Errore nella connessione al database");
 });
-//Query 3
+//Query 3 trovare gli unicorni di genere femminile o che pesano meno di 700 kg
 mongoClient.connect(CONNSTRING,function(err,client){
   if(!err)
   {
@@ -59,7 +59,7 @@ mongoClient.connect(CONNSTRING,function(err,client){
   else
     console.log("Errore nella connessione al database");
 });
-//Query 4
+//Query 4 trovare gli unicorni che amano (l’uva o le mele) e che hanno ucciso più di 60 vampiri
 mongoClient.connect(CONNSTRING,function(err,client){
   if(!err)
   {
@@ -76,7 +76,7 @@ mongoClient.connect(CONNSTRING,function(err,client){
   else
     console.log("Errore nella connessione al database");
 });
-//Query 5
+//Query 5 trovare gli unicorni che amano (l’uva e le mele) e che hanno ucciso più di 60 vampiri
 mongoClient.connect(CONNSTRING,function(err,client){
   if(!err)
   {
@@ -94,7 +94,7 @@ mongoClient.connect(CONNSTRING,function(err,client){
   else
     console.log("Errore nella connessione al database");
 });
-//Query 6
+//Query 6 trovare gli unicorni che hanno il pelo marrone oppure grigio
 mongoClient.connect(CONNSTRING,function(err,client){
   if(!err)
   {
@@ -128,7 +128,7 @@ mongoClient.connect(CONNSTRING,function(err,client){
   else
     console.log("Errore nella connessione al database");
 });
-//Query 7
+//Query 7 trovare gli unicorni vaccinati
 mongoClient.connect(CONNSTRING,function(err,client){
   if(!err)
   {
@@ -147,7 +147,7 @@ mongoClient.connect(CONNSTRING,function(err,client){
   else
     console.log("Errore nella connessione al database");
 });
-// Query 8
+// Query 8 aggiungere il campo vaccinated=false a tutti gli unicorni che non dispongono del campo vaccinated
 mongoClient.connect(CONNSTRING,function(err,client){
   if(!err)
   {
@@ -165,7 +165,7 @@ mongoClient.connect(CONNSTRING,function(err,client){
   else
     console.log("Errore nella connessione al database");
 })
-//Query 9
+//Query 9 trovare gli unicorni di genere femminile il cui nome inizia con la lettera A
 mongoClient.connect(CONNSTRING,function(err,client){
   if(!err)
   {
@@ -183,7 +183,7 @@ mongoClient.connect(CONNSTRING,function(err,client){
   else
     console.log("Errore nella connessione al database");
 });
-//Query 10
+//Query 10 trovare un unicorno sulla base dell’ID
 mongoClient.connect(CONNSTRING,function(err,client){
   if(!err)
   {
@@ -200,7 +200,7 @@ mongoClient.connect(CONNSTRING,function(err,client){
   else
     console.log("Errore nella connessione al database");
 });
-//Query 11 A
+//Query 11 A visualizzare nome e vampiri uccisi per tutti gli unicorni di genere maschile
 mongoClient.connect(CONNSTRING,function(err,client){
   if(!err)
   {
@@ -218,7 +218,7 @@ mongoClient.connect(CONNSTRING,function(err,client){
   else
     console.log("Errore nella connessione al database");
 });
-//Query 11 B
+//Query 11 B visualizzare i dati precedenti in modo ordinato sul n. decrescente di vampiri uccisi
 mongoClient.connect(CONNSTRING,function(err,client){
   if(!err)
   {
@@ -236,7 +236,7 @@ mongoClient.connect(CONNSTRING,function(err,client){
   else
     console.log("Errore nella connessione al database");
 });
-//Query 11 C
+//Query 11 C visualizzare i dati precedenti visualizzando soltanto i primi 3 record
 mongoClient.connect(CONNSTRING,function(err,client){
   if(!err)
   {
@@ -254,7 +254,7 @@ mongoClient.connect(CONNSTRING,function(err,client){
   else
     console.log("Errore nella connessione al database");
 });
-//Query 12
+//Query 12 contare il numero di vampiri che pesano più di 500 kg
 mongoClient.connect(CONNSTRING,function(err,client){
   if(!err)
   {
@@ -271,7 +271,7 @@ mongoClient.connect(CONNSTRING,function(err,client){
   else
     console.log("Errore nella connessione al database");
 });
-//Query 13
+//Query 13 visualizzare peso e pelo dell’unicorno Aurora
 mongoClient.connect(CONNSTRING,function(err,client){
   if(!err)
   {
@@ -289,7 +289,7 @@ mongoClient.connect(CONNSTRING,function(err,client){
   else
     console.log("Errore nella connessione al database");
 })
-//Query 14
+//Query 14 visualizzare i frutti amati dagli unicorni di genere femminile (ogni frutto una sola volta)
 mongoClient.connect(CONNSTRING,function(err,client){
   if(!err)
   {
@@ -308,7 +308,7 @@ mongoClient.connect(CONNSTRING,function(err,client){
   else
     console.log("Errore nella connessione al database");
 })
-//Query 15
+//Query 15 inserire un nuovo unicorno e, al termine dell’inserimento, cancellarlo nella stessa query
 mongoClient.connect(CONNSTRING,function(err,client){
   if(!err)
   {
@@ -333,7 +333,7 @@ mongoClient.connect(CONNSTRING,function(err,client){
   else
     console.log("Errore nella connessione al database");
 })
-//Query 16
+//Query 16 incrementare di 1 il numero dei vampiri uccisi da Pilot
 mongoClient.connect(CONNSTRING,function(err,client){
   if(!err)
   {
@@ -351,7 +351,7 @@ mongoClient.connect(CONNSTRING,function(err,client){
   else
     console.log("Errore nella connessione al database");
 })
-//Query 17
+//Query 17 aggiungere che l’uncorno Aurora ama anche le carote ed il suo peso è aumentato di 10kg
 mongoClient.connect(CONNSTRING,function(err,client){
   if(!err)
   {
@@ -369,7 +369,7 @@ mongoClient.connect(CONNSTRING,function(err,client){
   else
     console.log("Errore nella connessione al database");
 })
-//Query 18
+//Query 18 incrementare di 1 il numero di vampiri uccisi dall’unicorno Pluto. Se il record non esiste crearlo
 mongoClient.connect(CONNSTRING,function(err,client){
   if(!err)
   {
@@ -386,7 +386,7 @@ mongoClient.connect(CONNSTRING,function(err,client){
   else
     console.log("Errore nella connessione al database");
 })
-//Query 19
+//Query 19 rimuovere gli unicorni che amano sia l’uva sia le carote
 mongoClient.connect(CONNSTRING,function(err,client){
   if(!err)
   {
@@ -403,7 +403,7 @@ mongoClient.connect(CONNSTRING,function(err,client){
   else
     console.log("Errore nella connessione al database");
 })
-//Query 20
+//Query 20 trovare l’unicorno femmina che ha ucciso il maggior numero di vampiri. Restituire nome e numero di vampiri uccisi
 mongoClient.connect(CONNSTRING,function(err,client){
   if(!err){
       let db = client.db(DBNAME);
@@ -420,7 +420,7 @@ mongoClient.connect(CONNSTRING,function(err,client){
   else
     console.log("Errore nella connessione al DB " + err.message);
 });
-//Query 21
+//Query 21 sostituire completamente il record dell’unicorno Pluto con un nuovo record
 mongoClient.connect(CONNSTRING,function(err,client){
   if(!err)
   {
@@ -438,7 +438,7 @@ mongoClient.connect(CONNSTRING,function(err,client){
   else
     console.log("Errore nella connessione al database");
 })
-//Query 22
+//Query 22 trovare gli unicorni maschi che NON amano le mele
 mongoClient.connect(CONNSTRING,function(err,client){
   if(!err){
       let db = client.db(DBNAME);

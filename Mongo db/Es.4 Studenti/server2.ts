@@ -3,7 +3,7 @@ const mongoClient =_mongodb.MongoClient;
 const CONNECTIONSTRING="mongodb://127.0.0.1:27017";
 const DBNAME = "5B";
 const COLLECTION_NAME="vallauri";
-//Query 2
+//Query 2 varie medie
 mongoClient.connect(CONNECTIONSTRING,function(err,client){
     if(!err)
     {
@@ -43,7 +43,7 @@ mongoClient.connect(CONNECTIONSTRING,function(err,client){
     else
         console.log("Errore nella connessione al DB " + err.message);
 });
-//Query 3
+//Query 3 aggiungere un voto = 7 nella disciplina informatica per tutte le studentesse di genere femminile della 4A
 mongoClient.connect(CONNECTIONSTRING,function(err,client){
     if(!err)
     {
@@ -60,7 +60,7 @@ mongoClient.connect(CONNECTIONSTRING,function(err,client){
     else
         console.log("Errore nella connessione al DB " + err.message);
 });
-//Query 4
+//Query 4 cancellare tutti gli studenti della 3B che hanno preso un 3 in sistemi
 mongoClient.connect(CONNECTIONSTRING,function(err,client){
     if(!err)
     {
@@ -77,7 +77,7 @@ mongoClient.connect(CONNECTIONSTRING,function(err,client){
     else
         console.log("Errore nella connessione al DB " + err.message);
 });
-//Query 5
+//Query 5 per ciascuna classe calcolare il totale dei giorni di assenza.Ordinare i risultati sul totale dei giorni di assenza in ordine decrescente
 mongoClient.connect(CONNECTIONSTRING,function(err,client){
     if(!err)
     {

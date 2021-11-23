@@ -7,7 +7,7 @@ const COLLECTION_NAME="Orders";
 const COLLECTION_NAME2="Unicorns";
 const COLLECTION_NAME3="Quizzes";
 const COLLECTION_NAME4="Students";
-//Query 1
+//Query 1 somma di più campi
 mongoClient.connect(CONNSTRING,function(err,client){
   if(!err)
   {
@@ -36,7 +36,7 @@ mongoClient.connect(CONNSTRING,function(err,client){
     else
       console.log("Errore connessione al db: "+err.message);
 });
-//Query 2
+//Query 2 media
 mongoClient.connect(CONNSTRING,function(err,client){
   if(!err){
       let db = client.db(DBNAME);
@@ -61,7 +61,7 @@ mongoClient.connect(CONNSTRING,function(err,client){
   else
       console.log("Errore nella connessione al DB " + err.message);
 });
-//Query 3
+//Query 3 conteggio degli unicorni maschi e degli unicorni femmina
 mongoClient.connect(CONNSTRING,function(err,client){
   if(!err){
       let db = client.db(DBNAME);
@@ -85,7 +85,7 @@ mongoClient.connect(CONNSTRING,function(err,client){
   else
       console.log("Errore nella connessione al DB " + err.message);
 });
-//Query 4
+//Query 4 calcolare il numero medio di vampiri uccisi dagli unicorni femmina e dagli unicorni maschi
 mongoClient.connect(CONNSTRING,function(err,client){
   if(!err){
       let db = client.db(DBNAME);
@@ -107,7 +107,7 @@ mongoClient.connect(CONNSTRING,function(err,client){
   else
       console.log("Errore nella connessione al DB " + err.message);
 });
-//Query 5
+//Query 5 raggruppare gli unicorni per genere e tipo di pelo
 mongoClient.connect(CONNSTRING,function(err,client){
   if(!err){
       let db = client.db(DBNAME);
@@ -131,7 +131,7 @@ mongoClient.connect(CONNSTRING,function(err,client){
       console.log("Errore nella connessione al DB " + err.message);
   }
 });
-//Query 6
+//Query 6 numero medio di vampiri uccisi dagli unicorni complessivamente presenti nella collezione
 mongoClient.connect(CONNSTRING,function(err,client){
   if(!err){
       let db = client.db(DBNAME);
@@ -154,7 +154,7 @@ mongoClient.connect(CONNSTRING,function(err,client){
   else
       console.log("Errore nella connessione al DB " + err.message);
 });
-//Query 7
+//Query 7 varie medie
 mongoClient.connect(CONNSTRING,function(err,client){
   if(!err){
       let db = client.db(DBNAME);
@@ -197,7 +197,7 @@ mongoClient.connect(CONNSTRING,function(err,client){
   else
       console.log("Errore nella connessione al DB " + err.message);
 });
-//Query 8
+//Query 8  individuare nome e codice del secondo studente femmina con la media più alta
 mongoClient.connect(CONNSTRING,function(err,client){
   if(!err){
       let db = client.db(DBNAME);
@@ -224,7 +224,7 @@ mongoClient.connect(CONNSTRING,function(err,client){
   else
       console.log("Errore nella connessione al DB " + err.message);
 });
-//Query 9
+//Query 9 somma di elementi di un vettore
 mongoClient.connect(CONNSTRING,function(err,client){
   if(!err){
       let db = client.db(DBNAME);
@@ -269,12 +269,11 @@ mongoClient.connect(CONNSTRING,function(err,client){
     else
         console.log("Errore nella connessione al DB " + err.message);
   });
-//Query 10
+//Query 10 persone nate dopo il 2000 compreso
 mongoClient.connect(CONNSTRING,function(err,client){
   if(!err){
       let db = client.db(DBNAME);
       let collection = db.collection(COLLECTION_NAME4);
-      //Persone nate dopo il 2000 compreso
       //$expr -> permette di fare confronti tra chiavi diverse
       let req = collection.find({$expr:{$gte:[{$year:"$nato"},2000]}}).toArray(); //$year -> prende solo l'anno
       req.then(function(data){
@@ -290,7 +289,7 @@ mongoClient.connect(CONNSTRING,function(err,client){
   else
       console.log("Errore nella connessione al DB " + err.message);
 });
-//Query 11
+//Query 11 trovare il peso medio degli unicorni femmina ed il peso medio degli unicorni maschi
 mongoClient.connect(CONNSTRING,function(err,client){
 if(!err){
     let db = client.db(DBNAME);
@@ -314,7 +313,7 @@ if(!err){
 else
     console.log("Errore nella connessione al DB " + err.message);
 });
-//Query 12
+//Query 12 considerando soltanto gli unicorni che amano le mele, trovare il numero di vampiri complessivamente uccisi dagli unicorni maschi ed il numero di vampiri complessivamente uccisi dagli unicorni femmina
 mongoClient.connect(CONNSTRING,function(err,client){
 if(!err){
     let db = client.db(DBNAME);
@@ -339,7 +338,7 @@ if(!err){
 else
     console.log("Errore nella connessione al DB " + err.message);
 });
-//Query 13
+//Query 13 visualizzare i nomi dei frutti più amati dagli unicorni, in ordine di preferenza
 mongoClient.connect(CONNSTRING,function(err,client){
 if(!err){
     let db = client.db(DBNAME);
@@ -366,7 +365,7 @@ if(!err){
 else
     console.log("Errore nella connessione al DB " + err.message);
 });
-//Query 14
+//Query 14 valutare la media dei voti di ogni studente e poi la media delle medie degli studenti raggruppati per classe. Visualizzare la media delle classi, solo per le classi con media > 6
 mongoClient.connect(CONNSTRING,function(err,client){
 if(!err){
     let db = client.db(DBNAME);
@@ -396,7 +395,7 @@ if(!err){
 else
     console.log("Errore nella connessione al DB " + err.message);
 });
-//Query 15
+//Query 15 elenco degli studenti non ancora maggiorenni
 mongoClient.connect(CONNSTRING,function(err,client){
 if(!err){
     let db = client.db(DBNAME);
@@ -421,7 +420,7 @@ if(!err){
 else
     console.log("Errore nella connessione al DB " + err.message);
 });
-//Query 16
+//Query 16 elenco degli studenti nati in un certo anno
 mongoClient.connect(CONNSTRING,function(err,client){
 if(!err){
     let db = client.db(DBNAME);

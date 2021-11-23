@@ -18,7 +18,7 @@ dispatcher.addListener("POST","/api/servizio1",function(req,res)//Definisco il c
 {
     let dataStart=new Date(req["BODY"].dataStart); //Prendo il campo nome della chiave "BODY"
     let dataEnd=new Date(req["BODY"].dataEnd);
-    //Query 1
+    //Query 1 trovare tutti gli studenti nati tra due date
     mongoClient.connect(CONNECTIONSTRING,function(err,client){
         if(!err)
         {
