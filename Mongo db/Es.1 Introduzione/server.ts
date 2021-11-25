@@ -3,7 +3,7 @@ const mongoClient =_mongodb.MongoClient; //Client x connessione al db
 //Modello di accesso al database
 //Se il server da come risultato undefined, è andato tutto bene
 const CONNECTIONSTRING="mongodb://127.0.0.1:27017";
-//Query 4 find di più record
+//Query 1 find di più record
 mongoClient.connect(CONNECTIONSTRING,function(err,client){
     if(!err)
     {

@@ -1,6 +1,9 @@
 import * as _mongodb from 'mongodb'
 const mongoClient = _mongodb.MongoClient;
-const CONNSTRING = "mongodb://127.0.0.1:27017";
+//Accesso locale
+//const CONNSTRING = "mongodb://127.0.0.1:27017";
+//Accesso su Atlas
+const CONNSTRING = "mongodb+srv://Fabio:admin@cluster0.mvh5b.mongodb.net/5B?retryWrites=true&w=majority";
 const DBNAME = "5B";
 const COLLECTION_NAME= "Unicorns";
 //Esecuzione delle query asincrona, il risultato delle query è sempre ritornato all'interno di un vettore
