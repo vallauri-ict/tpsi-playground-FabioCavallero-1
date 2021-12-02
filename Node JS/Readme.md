@@ -2,4 +2,4 @@
 
 _Stud. Fabio Cavallero_
 
-###### Esercizi di TPSI in liguaggio HTML, Javascript ed Ajax, utilizzando Node JS.
+###### Esercizi di TPSI in liguaggio HTML, CSS, Javascript & Typescript, utilizzando Node JS.
