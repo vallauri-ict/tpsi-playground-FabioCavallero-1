@@ -2,4 +2,4 @@
 
 _Stud. Fabio Cavallero_
 
-###### Esercizi di TPSI in liguaggio HTML, Javascript, Typescript ed SQL, utilizzando Mongo db.
+###### Esercizi di TPSI in liguaggio HTML, Javascript, Typescript & SQL, utilizzando Mongo db.
