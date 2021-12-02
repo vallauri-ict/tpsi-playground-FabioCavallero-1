@@ -2,4 +2,4 @@
 
 _Stud. Fabio Cavallero_
 
-###### Esercizi di TPSI in liguaggio HTML, Javascript ed Ajax, utilizzando Express.
+###### Esercizi di TPSI in liguaggio HTML, Javascript, Typescript & SQL utilizzando Express.
