@@ -5,5 +5,6 @@ _Stud. Fabio Cavallero_
 ### Es.1 Introduzione
 
 Primo esercizio di Mongo Db:
--Utilizzati i metodi client.connect e db.find().
--Primo utilizzo delle query insert, delete ed update.
+- Utilizzati i metodi client.connect e db.find().
+- Primo utilizzo delle query insert, delete ed update.
+- Creazione di un Db Students.
