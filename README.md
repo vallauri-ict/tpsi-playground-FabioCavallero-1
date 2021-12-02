@@ -1,11 +1,11 @@
-# tpsi-playground-FabioCavallero-1
+# tpsi-playground-FabioCavallero
 
 _Stud. Fabio Cavallero_
 
 ###### Esercizi di TPSI svolti in classe con programmazione in:
 
-HTML, Javascript ed Ajax.
+HTML, CSS, Javascript, Typescript & SQL.
 
 ###### Progetti: 
 
-Angular (vedi omonime repository).
+Students & My recipes(vedi omonime repository).
