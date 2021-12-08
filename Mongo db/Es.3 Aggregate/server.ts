@@ -16,7 +16,7 @@ mongoClient.connect(CONNSTRING,function(err,client){
     //I nomi dei campi devono essere sempre preceduti dal "$" se sono usati come valore a destra dei ":"
     let req= collection.aggregate([ //aggregate -> consente di eseguire query di selezione più complesse
       {$match:{"status":"A"}}, //$match -> identifica tutti i record con la chiave ed il valore indicato
-      {$group:{"_id":"$cust_id","totale":{$sum:"$amount"}}},//$group-> raggruppa in 1 solo record dei record che hanno LO STESSO il custId e somma nel record complessivo i rispettivi amount 
+      {$group:{"_id":"$cust_id","totale":{$sum:"$amount"}}},//$group-> raggruppa in 1 solo record dei record che hanno LO STESSO custId e somma nel record complessivo i rispettivi amount 
       //Il recordset risultante avrà solo 2 colonne che sono _id e totale: tutti gli altri campi non sono visibili: abbiamo solo quelli che chiediamo nella group
       {$sort:{"amount":-1}}
     ]).toArray();
@@ -167,7 +167,7 @@ mongoClient.connect(CONNSTRING,function(err,client){
         "examAvg":{$avg:["$midterm","$final"]}
         }},
         {$project:{
-          "quizAvg":{$round:["$quizAvg",1]}, //Approsimazione decimale 1 -> 1 numero dopo la virgola
+          "quizAvg":{$round:["$quizAvg",1]}, //Approsimazione decimale, 1 -> 1 numero dopo la virgola
           "labAvg":{$round:["$labAvg",1]},
           "examAvg":{$round:["$examAvg",1]}
         }},
@@ -197,7 +197,7 @@ mongoClient.connect(CONNSTRING,function(err,client){
   else
       console.log("Errore nella connessione al DB " + err.message);
 });
-//Query 8  individuare nome e codice del secondo studente femmina con la media più alta
+//Query 8 individuare nome e codice del secondo studente femmina con la media più alta
 mongoClient.connect(CONNSTRING,function(err,client){
   if(!err){
       let db = client.db(DBNAME);
@@ -247,7 +247,7 @@ mongoClient.connect(CONNSTRING,function(err,client){
   else
       console.log("Errore nella connessione al DB " + err.message);
 });
-// //Seconda soluzione
+//Seconda soluzione
 mongoClient.connect(CONNSTRING,function(err,client){
     if(!err){
         let db = client.db(DBNAME);

@@ -6,7 +6,7 @@ const mongoClient =_mongodb.MongoClient;
 const CONNECTIONSTRING="mongodb://127.0.0.1:27017";
 const DBNAME = "5B";
 let port: number=1337;
-let dispatcher:Dispatcher=new Dispatcher();//Istanzio la classe Dispatcher, così utilizzo dal server tutti i metodi delle classe Dispatcher
+let dispatcher:Dispatcher=new Dispatcher();//Istanzio la classe Dispatcher, così utilizzo dal server tutti i metodi della classe Dispatcher
 let server=_http.createServer(function(req,res) //Routine che risponde alle richieste
 {
     dispatcher.dispatch(req,res); //Cuore del sistema: registra nella variabile listeners tutte le richieste del client e fornirle a quest'ultimo
@@ -24,7 +24,7 @@ dispatcher.addListener("POST","/api/servizio1",function(req,res)//Definisco il c
         {
           let db = client.db(DBNAME);
           let collection = db.collection("vallauri");
-          collection.find({$and:[{dob:{$gte:dataStart,$lte:dataEnd}}]})
+          collection.find({$and:[{"dob":{$gte:dataStart,$lte:dataEnd}}]})
           .project({"nome":1, "classe":1})
           .toArray(function(err,data){
               if(!err){
