@@ -2,14 +2,13 @@ import express from "express";
 import * as fs from "fs";
 import * as http from "http";
 import * as body_parser from "body-parser";
-import { json } from "body-parser";
 //Import di Mongo
 import * as _mongodb from "mongodb";
 const mongoClient =_mongodb.MongoClient;
 //Connessione locale
 //const CONNECTIONSTRING="mongodb://127.0.0.1:27017";
 const CONNECTIONSTRING="mongodb+srv://Fabio:admin@cluster0.mvh5b.mongodb.net/5B?retryWrites=true&w=majority";
-const DBNAME = "5B";
+const DBNAME = "Unicorns";
 let port: number=1337;
 let app=express(); //Richiamo il costruttore
 let server=http.createServer(app); //Routine che risponde alle richieste
@@ -48,7 +47,8 @@ app.use("/",function(req,res,next){
         console.log("          Parametri BODY: ",req.body);
     next();
 })
-//Route della creazione della connessione: tutti i listeners fanno 2 cose alternative(next() o risponde al client)
+//Elenco delle route di risposta al client
+//5.Route della creazione della connessione: tutti i listeners fanno 2 cose alternative(next() o risponde al client)
 app.use("/",function(req,res,next){
     mongoClient.connect(CONNECTIONSTRING,function(err,client){
         if(err) 
@@ -61,19 +61,33 @@ app.use("/",function(req,res,next){
         }
     })
 })
-//Elenco delle route di risposta al client
-//5
-app.get("/api/risorsa1",function(req,res){
-    let unicorn=req.query.nome;
-    if(unicorn){
-        let db = req["client"].db(DBNAME) as _mongodb.Db; //as _mongodb.Db -> consigli dell'intelligence (senza questo comando non viene riconosciuta la variabile client)
+//6.
+app.use("/api/getCollections",function(req,res,next){
+    let db = req["client"].db(DBNAME) as _mongodb.Db;
+    let request = db.listCollections().toArray();
+    request.then(function(data){
+        res.send(data);
+    });
+    request.catch(function(err){
+        res.status(503).send("Errore esecuzione query");
+    })
+    request.finally(function(){
+        req["client"].close();
+    })
+});
+//7.
+app.get("/api/servizio1",function(req,res,next){
+    let unicorn = req.query.nome;
+    if(unicorn)
+    {
+        let db = req["client"].db(DBNAME) as _mongodb.Db;
         let collection = db.collection("Unicorns");
         let request = collection.find({"name":unicorn}).toArray();
         request.then(function(data){
             res.send(data);
         });
         request.catch(function(err){
-            res.status(503).send("Errore nella sintassi della query")
+            res.status(503).send("Errore esecuzione query");
         })
         request.finally(function(){
             req["client"].close();
@@ -81,23 +95,24 @@ app.get("/api/risorsa1",function(req,res){
     }
     else
     {
-        res.status(400).send("Parametro mancante o non valido");
+        res.status(400).send("Parametro mancante: UnicornName");
         req["client"].close();
     }
 });
-//6
-app.patch("/api/risorsa2",function(req,res){
-    let unicorn=req.body.nome;
-    let incVampires=req.body.vampires;
-    if(unicorn && incVampires){
-        let db = req["client"].db(DBNAME) as _mongodb.Db; 
+//8.
+app.patch("/api/servizio2",function(req,res,next){
+    let unicorn = req.body.nome;
+    let incVampires = req.body.vampires;
+    if(unicorn && incVampires)
+    {
+        let db = req["client"].db(DBNAME) as _mongodb.Db;
         let collection = db.collection("Unicorns");
-        let request = collection.updateOne({"name":unicorn},{$inc:{"vampires":incVampires}});
+        let request = collection.updateOne({"name":unicorn},{$inc:{vampires:incVampires}});
         request.then(function(data){
             res.send(data);
         });
         request.catch(function(err){
-            res.status(503).send("Errore nella sintassi della query")
+            res.status(503).send("Errore esecuzione query");
         })
         request.finally(function(){
             req["client"].close();
@@ -105,11 +120,11 @@ app.patch("/api/risorsa2",function(req,res){
     }
     else
     {
-        res.status(400).send("Parametro mancante o non valido");
+        res.status(400).send("Parametro mancante: name o vampires");
         req["client"].close();
     }
 });
-//7
+//9.
 app.get("/api/risorsa3/:gender/:hair",function(req,res){
     let gender=req.body.gender;
     let hair=req.body.hair;
