@@ -5,8 +5,7 @@ import * as body_parser from "body-parser";
 //Import di Mongo
 import * as _mongodb from "mongodb";
 const mongoClient =_mongodb.MongoClient;
-//Connessione locale
-//const CONNECTIONSTRING="mongodb://127.0.0.1:27017";
+//Connessione alla rete
 const CONNECTIONSTRING="mongodb+srv://Fabio:admin@cluster0.mvh5b.mongodb.net/5B?retryWrites=true&w=majority";
 const DBNAME = "Unicorns";
 let port: number=1337;
@@ -48,7 +47,7 @@ app.use("/",function(req,res,next){
     next();
 })
 //Elenco delle route di risposta al client
-//5.Route della creazione della connessione: tutti i listeners fanno 2 cose alternative(next() o risponde al client)
+//Middleware della creazione della connessione: tutti i listeners fanno 2 cose alternative(next() o risponde al client)
 app.use("/",function(req,res,next){
     mongoClient.connect(CONNECTIONSTRING,function(err,client){
         if(err) 
@@ -61,7 +60,7 @@ app.use("/",function(req,res,next){
         }
     })
 })
-//6.
+//Lettura delle collezioni presenti nel db, messo sopra al listener GET, sennò non funziona, perchè rispondono quelli sopra
 app.use("/api/getCollections",function(req,res,next){
     let db = req["client"].db(DBNAME) as _mongodb.Db;
     let request = db.listCollections().toArray();
@@ -75,72 +74,47 @@ app.use("/api/getCollections",function(req,res,next){
         req["client"].close();
     })
 });
-//7.
-app.get("/api/servizio1",function(req,res,next){
-    let unicorn = req.query.nome;
-    if(unicorn)
-    {
-        let db = req["client"].db(DBNAME) as _mongodb.Db;
-        let collection = db.collection("Unicorns");
-        let request = collection.find({"name":unicorn}).toArray();
-        request.then(function(data){
-            res.send(data);
-        });
-        request.catch(function(err){
-            res.status(503).send("Errore esecuzione query");
-        })
-        request.finally(function(){
-            req["client"].close();
-        })
-    }
-    else
-    {
-        res.status(400).send("Parametro mancante: UnicornName");
-        req["client"].close();
-    }
-});
-//8.
-app.patch("/api/servizio2",function(req,res,next){
-    let unicorn = req.body.nome;
-    let incVampires = req.body.vampires;
-    if(unicorn && incVampires)
-    {
-        let db = req["client"].db(DBNAME) as _mongodb.Db;
-        let collection = db.collection("Unicorns");
-        let request = collection.updateOne({"name":unicorn},{$inc:{vampires:incVampires}});
-        request.then(function(data){
-            res.send(data);
-        });
-        request.catch(function(err){
-            res.status(503).send("Errore esecuzione query");
-        })
-        request.finally(function(){
-            req["client"].close();
-        })
-    }
-    else
-    {
-        res.status(400).send("Parametro mancante: name o vampires");
-        req["client"].close();
-    }
-});
-//9.
-app.get("/api/risorsa3/:gender/:hair",function(req,res){
-    let gender=req.body.gender;
-    let hair=req.body.hair;
-    //La if sull'esistenza dei parametri in questo caso non serve, perchè se mancano dei parametri non entra manco nella route
+//Middleware per intercettazione dei parametri
+let currentCollection="";
+let id="";
+// /:id-> facoltativo
+app.use("/api/:collection/:id?",(req,res,next) =>{
+    currentCollection=req.params.collection;
+    id=req.params.id;
+    next();
+})
+//Elenco listener specifici
+//Listener GET
+app.get("/api/*",function(req,res){
     let db = req["client"].db(DBNAME) as _mongodb.Db; 
-    let collection = db.collection("Unicorns");
-    let request = collection.find({$and:[{"gender":gender},{"hair":hair}]}).toArray();
-    request.then(function(data){
-        res.send(data);
-    });
-    request.catch(function(err){
-        res.status(503).send("Errore nella sintassi della query")
-    })
-    request.finally(function(){
-        req["client"].close();
-    })
+    let collection = db.collection(currentCollection);
+    if(!id)
+    {
+        let request = collection.find().toArray();
+        request.then(function(data){
+            res.send(data);
+        });
+        request.catch(function(err){
+            res.status(503).send("Errore nella sintassi della query")
+        });
+        request.finally(function(){
+            req["client"].close();
+        });
+    }
+    else
+    {
+        let objectId=new _mongodb.ObjectId(id);
+        let request = collection.find({"_id":objectId}).toArray();
+        request.then(function(data){
+            res.send(data);
+        });
+        request.catch(function(err){
+            res.status(503).send("Errore nella sintassi della query")
+        });
+        request.finally(function(){
+            req["client"].close();
+        });
+    }
 });
 //Default route(risponde in caso di risorsa non trovata)
 app.use("/",function(req,res){
