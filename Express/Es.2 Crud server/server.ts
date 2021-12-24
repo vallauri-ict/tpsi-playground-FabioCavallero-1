@@ -4,10 +4,11 @@ import * as http from "http";
 import * as body_parser from "body-parser";
 //Import di Mongo
 import * as _mongodb from "mongodb";
+import cors from "cors";
 const mongoClient =_mongodb.MongoClient;
 //Connessione alla rete
 const CONNECTIONSTRING="mongodb+srv://Fabio:admin@cluster0.mvh5b.mongodb.net/5B?retryWrites=true&w=majority";
-const DBNAME = "Unicorns";
+const DBNAME = "recipeBook";
 let port: number=1337;
 let app=express(); //Richiamo il costruttore
 let server=http.createServer(app); //Routine che risponde alle richieste
@@ -15,6 +16,22 @@ server.listen(port,function(){
     console.log("Server in ascolto sulla porta "+port);
     init();
 });
+const whitelist = ["http://localhost:4200", "https://localhost:1337"];
+const corsOptions = {
+ origin: function(origin, callback) {
+ if (!origin)
+ return callback(null, true);
+ if (whitelist.indexOf(origin) === -1) {
+ var msg = 'The CORS policy for this site does not ' +
+ 'allow access from the specified Origin.';
+ return callback(new Error(msg), false);
+ }
+ else
+ return callback(null, true);
+ },
+ credentials: true
+};
+app.use("/", cors(corsOptions));
 let paginaErrore="";
 function init()
 {
@@ -90,7 +107,7 @@ app.get("/api/*",function(req,res){
     let collection = db.collection(currentCollection);
     if(!id)
     {
-        let request = collection.find().toArray();
+        let request = collection.find(req["query"]).toArray();
         request.then(function(data){
             res.send(data);
         });
@@ -104,7 +121,7 @@ app.get("/api/*",function(req,res){
     else
     {
         let objectId=new _mongodb.ObjectId(id);
-        let request = collection.find({"_id":objectId}).toArray();
+        let request = collection.findOne({"_id":objectId});
         request.then(function(data){
             res.send(data);
         });
@@ -116,15 +133,68 @@ app.get("/api/*",function(req,res){
         });
     }
 });
+//Listener POST
+app.post("/api/*",function(req,res){
+    let db = req["client"].db(DBNAME) as _mongodb.Db; 
+    let collection = db.collection(currentCollection);
+    let request = collection.insertOne(req["body"]);
+    request.then(function(data){
+        res.send(data);
+    });
+    request.catch(function(err){
+        res.status(503).send("Errore nella sintassi della query")
+    });
+    request.finally(function(){
+        req["client"].close();
+    });
+});    
+app.delete("/api/*",function(req,res){
+    let db = req["client"].db(DBNAME) as _mongodb.Db; 
+    let collection = db.collection(currentCollection);
+    let _id=new _mongodb.ObjectId(id);
+    let request = collection.deleteOne({"_id":_id});
+    request.then(function(data){
+        res.send(data);
+    });
+    request.catch(function(err){
+        res.status(503).send("Errore nella sintassi della query")
+    });
+    request.finally(function(){
+        req["client"].close();
+    });
+});
+app.patch("/api/*", function (req, res) {
+    let db = req["client"].db(DBNAME) as _mongodb.Db;
+    let collection = db.collection(currentCollection);
+    let _id = new _mongodb.ObjectId(id);
+    let request = collection.updateOne({ "_id": _id }, { "$set": req["BODY"] });
+    request.then(function (data) {
+       res.send(data);
+    });
+    request.catch(function (err) {
+       res.status(503).send("Errore esecuzione query");
+    })
+    request.finally(function () {
+       req["client"].close();
+    })
+ });
+ app.put("/api/*", function (req, res) {
+    let db = req["client"].db(DBNAME) as _mongodb.Db;
+    let collection = db.collection(currentCollection);
+    let _id = new _mongodb.ObjectId(id);
+    let request = collection.replaceOne({ "_id": _id }, req["BODY"]);
+    request.then(function (data) {
+       res.send(data);
+    });
+    request.catch(function (err) {
+       res.status(503).send("Errore esecuzione query");
+    })
+    request.finally(function () {
+       req["client"].close();
+    })
+ });
 //Default route(risponde in caso di risorsa non trovata)
-app.use("/",function(req,res){
-    res.status(404);
-    if(req.originalUrl.startsWith("/api/"))
-        res.send("Risorsa non trovata");
-    else
-        res.send(paginaErrore);
-}) 
 //Route di gestione degli errori
 app.use(function(err,req,res,next){
-    console.log("Errore codice server",err.message);
+    console.log("**************** ERRORE CODICE SERVER ",err.message, " **************");
 }) 
