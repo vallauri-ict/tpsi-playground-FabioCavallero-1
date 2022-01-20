@@ -6,17 +6,17 @@ import * as body_parser from "body-parser";
 import * as _mongodb from "mongodb";
 import cors from "cors";
 const mongoClient =_mongodb.MongoClient;
-//Connessione alla rete
-const CONNECTIONSTRING="mongodb+srv://Fabio:admin@cluster0.mvh5b.mongodb.net/5B?retryWrites=true&w=majority";
+//Connessione ad heroku
+const CONNECTIONSTRING= process.env.MONGODB_URI || "mongodb+srv://Fabio:admin@cluster0.mvh5b.mongodb.net/5B?retryWrites=true&w=majority";
 const DBNAME = "recipeBook";
-let port: number=1337;
+let port: number=parseInt(process.env.PORT) || 1337;
 let app=express(); //Richiamo il costruttore
 let server=http.createServer(app); //Routine che risponde alle richieste
 server.listen(port,function(){
     console.log("Server in ascolto sulla porta "+port);
     init();
 });
-const whitelist = ["http://localhost:4200", "https://localhost:1337"];
+const whitelist = ["http://localhost:4200", "http://localhost:1337", "https://fabio-cavallero-crud-server.herokuapp.com"];
 const corsOptions = {
  origin: function(origin, callback) {
  if (!origin)
@@ -78,7 +78,7 @@ app.use("/",function(req,res,next){
     })
 })
 //Lettura delle collezioni presenti nel db, messo sopra al listener GET, sennò non funziona, perchè rispondono quelli sopra
-app.use("/api/getCollections",function(req,res,next){
+app.get("/api/getCollections",function(req,res,next){
     let db = req["client"].db(DBNAME) as _mongodb.Db;
     let request = db.listCollections().toArray();
     request.then(function(data){
@@ -195,6 +195,6 @@ app.patch("/api/*", function (req, res) {
  });
 //Default route(risponde in caso di risorsa non trovata)
 //Route di gestione degli errori
-app.use(function(err,req,res,next){
+app.use("/",function(err,req,res,next){
     console.log("**************** ERRORE CODICE SERVER ",err.message, " **************");
 }) 
