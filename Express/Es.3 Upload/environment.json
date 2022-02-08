@@ -1,0 +1,9 @@
+{
+    "CLOUDINARY":{
+        "CLOUD_NAME":"vallauri" ,
+        "API_KEY":"776254985465195" ,
+        "API_SECRET":"yEI6biwv053OeaY19dkJZur8czc",
+        "CLOUDINARY_URL":"CLOUDINARY_URL=cloudinary://776254985465195:yEI6biwv053OeaY19dkJZur8czc@vallauri"
+    },
+    "CONNECTION_STRING":"mongodb+srv://Fabio:admin@cluster0.mvh5b.mongodb.net/5B?retryWrites=true&w=majority"
+}
