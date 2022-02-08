@@ -15,8 +15,8 @@ let server=http.createServer(app); //Routine che risponde alle richieste
 server.listen(port,function(){
     console.log("Server in ascolto sulla porta "+port);
     init();
-});
-const whitelist = ["http://localhost:4200", "http://localhost:1337", "https://fabio-cavallero-crud-server.herokuapp.com"];
+});                     //Angular                   //Locale                           //Eroku con https                                   //Eroku con http
+const whitelist = ["http://localhost:4200", "http://localhost:1337", "https://fabio-cavallero-crud-server.herokuapp.com", "http://fabio-cavallero-crud-server.herokuapp.com"];
 const corsOptions = {
  origin: function(origin, callback) {
  if (!origin)
@@ -194,6 +194,10 @@ app.patch("/api/*", function (req, res) {
     })
  });
 //Default route(risponde in caso di risorsa non trovata)
+app.use("/", function (req, res, next) {
+    res.status(404);
+    res.send("Risorsa non trovata");
+}); 
 //Route di gestione degli errori
 app.use("/",function(err,req,res,next){
     console.log("**************** ERRORE CODICE SERVER ",err.message, " **************");
