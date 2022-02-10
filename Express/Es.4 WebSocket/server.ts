@@ -1,10 +1,11 @@
 "use strict";
-import http from "http";
-import colors from "colors";
+import http from 'http';
+import colors from 'colors';
 import express from "express";
 const app = express();
 const httpServer = http.createServer(app);
-import {Server, Socket} from "socket.io" // import solo l‟oggetto Server
+import {Server, Socket} from 'socket.io'; // import solo l‟oggetto Server
+import { json } from 'body-parser';
 const io = new Server(httpServer);
 const PORT = 1337
 httpServer.listen(PORT, function() {
@@ -13,16 +14,15 @@ httpServer.listen(PORT, function() {
 app.use(express.static('./static'));
 /************************* gestione web socket ********************** */
 let users = [];
-/* in corrispondenza della connessione di un client,
-  per ogni utente viene generato un evento 'connection' a cui
-  viene inettato il 'clientSocket' contenente IP e PORT del client.
-  Per ogni utente la funzione di callback crea una variabile locale
-  'user' contenente tutte le informazioni relative al singolo utente  */
+/* in corrispondenza della connessione di un client, per ogni utente viene generato un evento 
+'connection' a cui viene inettato il 'clientSocket' contenente IP e PORT del client. Per ogni 
+utente la funzione di callback crea una variabile locale 'user' contenente tutte le informazioni
+relative al singolo utente */
 io.on('connection', function(clientSocket) {
 	let user = {} as {username:string, socket:Socket, room:string};
 	// 1) ricezione username
 	clientSocket.on('login', function(userInfo) {
-		userInfo=JSON.parse(userInfo);
+		userInfo = JSON.parse(userInfo);
 		// controllo se user esiste già
 		let item = users.find(function(item) {
 			return (item.username == userInfo.username)
@@ -32,14 +32,14 @@ io.on('connection', function(clientSocket) {
 		}
 		else{
 			user.username = userInfo.username;
-			user.room=userInfo.room;
+			user.room = userInfo.room;
 			user.socket = clientSocket;
 			users.push(user);
 			clientSocket.emit("loginAck", "OK")
 			log('User ' + colors.yellow(user.username) +
 						" (sockID=" + user.socket.id + ') connected!');
-			//Inserisco lo username nella stanza richiesta
-			this.join(user.room); //this -> client socket
+			//inserisco username nella stanza richiesta 
+			this.join(user.room);
 		}
 	});
 	// 2) ricezione di un messaggio	 
@@ -52,9 +52,9 @@ io.on('connection', function(clientSocket) {
 			'message': msg,
 			'date': new Date()
 		}
-		//Spedisco a tutti, compreso il mittente
-		//io.sockets.emit('message_notify', JSON.stringify(response));
-		//Spedisco solo alla stanza richiesta
+		//con questa sintassi spedisco a tutti compreso il mittente
+		////io.sockets.emit('message_notify', JSON.stringify(response));
+		//con questa sintassi spedisco solo alla stanza richiesta
 		io.to(user.room).emit('message_notify', JSON.stringify(response));
 	});
     // 3) disconnessione dell'utente
