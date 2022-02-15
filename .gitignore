@@ -363,3 +363,9 @@ FodyWeavers.xsd
 
 # Environment
 environment.json
+
+# Dependency directories
+node_modules/
+jspm_packages/
+environment.json/
+keys/
