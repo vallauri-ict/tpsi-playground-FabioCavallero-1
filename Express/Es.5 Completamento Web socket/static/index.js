@@ -1,6 +1,6 @@
 "use strict"
 $(document).ready(function() {
-    let user = {"username":"","room":""};
+    let user = {"username":"","room":""}; //Oggetto vuoto
     let serverSocket;
     let btnConnetti =$("#btnConnetti");
     let btnDisconnetti =$("#btnDisconnetti");

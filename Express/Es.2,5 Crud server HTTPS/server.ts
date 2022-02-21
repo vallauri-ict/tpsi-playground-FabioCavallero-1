@@ -1,6 +1,7 @@
 import express from "express";
 import * as fs from "fs";
 import * as http from "http";
+import * as https from "https";
 import * as body_parser from "body-parser";
 //Import di Mongo
 import * as _mongodb from "mongodb";
@@ -12,14 +13,20 @@ const DBNAME = "recipeBook";
 let port: number=parseInt(process.env.PORT) || 1337;
 let app=express(); //Richiamo il costruttore
 let portHttps:number=1338;
+//necessario il certificato per confermare la sicurezza del sito
 let privateKey = fs.readFileSync("keys/privateKey.pem","utf8");
 let certificato= fs.readFileSync("keys/certificate.crt","utf8");
-let server=http.createServer(app); //Routine che risponde alle richieste
-server.listen(port,function(){
-    console.log("Server in ascolto sulla porta "+port);
+const credentials = {"key":privateKey,"cert":certificato};
+let serverHttp=http.createServer(app); //Routine che risponde alle richieste
+let serverHttps=https.createServer(credentials,app);
+serverHttp.listen(port,function(){
     init();
-});                     //Angular                   //Locale                           //Eroku con https                                   //Eroku con http
-const whitelist = ["http://localhost:4200", "http://localhost:1337", "https://fabio-cavallero-crud-server.herokuapp.com", "http://fabio-cavallero-crud-server.herokuapp.com"];
+});
+serverHttp.listen(port,function(){
+    console.log("Server in ascolto sulla porte HTTP: "+port+ " , HTTPS: "+portHttps);
+});
+                         //Angular                  //Locale              //Sicura                              //Eroku con https                                   //Eroku con http
+const whitelist = ["http://localhost:4200", "http://localhost:1337","https://localhost:1338", "https://fabio-cavallero-crud-server.herokuapp.com", "http://fabio-cavallero-crud-server.herokuapp.com"];
 const corsOptions = {
  origin: function(origin, callback) {
  if (!origin)

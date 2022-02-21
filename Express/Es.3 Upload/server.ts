@@ -1,12 +1,12 @@
 import * as http from "http";
 import * as fs from "fs";
-import express from "express";
+import express from "express"; //Importazione di modulo specifico
 import * as bodyParser from "body-parser";
 import cors from "cors";
 import * as _mongodb from "mongodb"; // MongoDB
 import fileUpload, { UploadedFile } from "express-fileupload";
 import ENVIRONMENT from "./environment.json";
-import cloudinary, { UploadApiResponse } from "cloudinary";
+import cloudinary, { UploadApiResponse } from "cloudinary"; // {} --> indicano un tipo di dato
 //Configurazione Cloudinary
 cloudinary.v2.config({
     cloud_name: ENVIRONMENT.CLOUDINARY.CLOUD_NAME,
@@ -109,10 +109,12 @@ app.get("/api/images",function(req,res){
 app.post("/api/uploadBinary", function (req, res, next) {
     let db = req["client"].db(DBNAME) as _mongodb.Db;
     let collection = db.collection("images");
+    //req contiene i parametri passati dal client al server (es. $_REQUEST di php)
     if (!req.files || Object.keys(req.files).length == 0 || !req.body.username)
         res.status(400).send('Username o immagine mancante');
     else {
-        let _file = req.files.img as UploadedFile;
+        let _file = req.files.img as UploadedFile; //lettura dell'immagine dalla request e conversione nel formato necessario
+        //sposto l'immagine dalla request alla cartella desiderata
         _file.mv('./static/img/' + _file["name"], function (err) {
             if (err)
                 res.status(500).json(err.message);
@@ -150,6 +152,7 @@ app.post("/api/uploadBase64", function (req, res, next) {
     })
 });
 app.post("/api/cloudinaryBase64", function (req, res, next) {
+    //Caricamento immagine su cloudinary
     cloudinary.v2.uploader.upload(req.body.image, { "folder": "Ese03 - Upload" })
         .catch((error) => {
             res.status(500).send("Errore nel caricamento del file su cloudinary");
@@ -160,7 +163,7 @@ app.post("/api/cloudinaryBase64", function (req, res, next) {
             let collection = db.collection("images");
             let user = {
                 "username": req.body.username,
-                "img": result.secure_url
+                "img": result.secure_url    //url che indica la posizione della risorsa
             }
             let request = collection.insertOne(user);
             request.then(function (data) {
@@ -185,6 +188,7 @@ app.post("/api/cloudinaryBinario", function (req, res, next) {
           res.status(500).json(err.message);
         }
         else {
+            //use_filename indica la posizione di partenza dell'immagine (default req.body.image)
           cloudinary.v2.uploader.upload(path, { "folder": "Ese03 - Upload", use_filename: true })
           .catch((error) => {
             res.status(500).send("error uploading file to cloudinary")

@@ -9,7 +9,8 @@ $(document).ready(function() {
     // mi connetto al server che mi ha inviato la pagina, il quale mi 
     //restituisce il suo serverSocket. io.connect é SINCRONO, bloccante
     $("#btnConnetti").on("click",function(){
-        serverSocket = io({transports:['websocket'], upgrade: false}).connect();
+        //Instauro la connessione 
+        serverSocket = io({transports:['websocket'], upgrade: false}).connect(); //upgade: false -> perchè stiamo utilizzando web socket e non http
         serverSocket.on('connect', function() {
             console.log("connessione ok");
             impostaUser();

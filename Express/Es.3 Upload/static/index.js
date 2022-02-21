@@ -13,7 +13,7 @@ $(document).ready(function() {
 		   for (let item of data){
 			   let tr = $("<tr>").appendTo(tbody).addClass("text-center")
 			   $("<td>").appendTo(tr).text(item.username).css("font-size", "14pt")
-			   // se NON è un base64  e  NON è un cloudinary
+			   // se NON è un base64  e  NON è un cloudinary, controllo sulle intestazioni del pacchetto inviato
 			   if (!item.img.toString().startsWith("data:image") && 
 				   !item.img.toString().startsWith("https://res.cloudinary.com"))
 						item.img = "img/" + item.img;
@@ -23,7 +23,7 @@ $(document).ready(function() {
 	   })
 	}
 	$("#btnBinary").on("click", function() {
-	   let file = txtFile.prop('files')[0]
+	   let file = txtFile.prop('files')[0] //seleziono l'elemento in posizione 0 dell'array "files"
 	   let username = txtUser.val()
 	   if (!file || !txtUser.val()){
 		   alert("prego, inserire uno username e scegliere un file")
@@ -145,7 +145,8 @@ $(document).ready(function() {
 								   resolve(reader.result); //base 64
 							   }
 						   })
-						   .catch(err => reject(err))							
+						   //Promise: oggetto che permette di gestire 3 casi (pending, fulfilled, rejected)
+						   .catch(err => reject(err))	//ritorna una promise formattata correttamente						
 					   })	
 					   .catch(function(err) { reject(err)} )			
 				   }

@@ -4,9 +4,11 @@ $(document).ready(function() {
         let request = inviaRichiesta("GET", "/api/risorsa1", {"nome":"Kenny"});
         request.fail(errore);
         request.done(function(data) {
-            alert(JSON.stringify(data));
+            alert(JSON.stringify(data)); //Conversione da json object a stringa
         });
     });
+    //PATCH: aggiornamento/update
+    //parametri passati nel body della richiesta
     $("#btnInvia2").on("click", function() {
         let request = inviaRichiesta("PATCH", "/api/risorsa2", {"nome":"Unico","vampires":3});
         request.fail(errore);

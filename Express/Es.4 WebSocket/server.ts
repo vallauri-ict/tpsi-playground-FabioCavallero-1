@@ -3,10 +3,10 @@ import http from 'http';
 import colors from 'colors';
 import express from "express";
 const app = express();
-const httpServer = http.createServer(app);
-import {Server, Socket} from 'socket.io'; // import solo l‟oggetto Server
+const httpServer = http.createServer(app); //Server che risponde alle chiamate
+import {Server, Socket} from 'socket.io'; // importo l'oggetto Server e socket
 import { json } from 'body-parser';
-const io = new Server(httpServer);
+const io = new Server(httpServer); //Creazione server di comunicazione web socket
 const PORT = 1337
 httpServer.listen(PORT, function() {
     console.log('Server listening on port ' + PORT);
@@ -28,7 +28,7 @@ io.on('connection', function(clientSocket) {
 			return (item.username == userInfo.username)
 		})
 		if (item != null) {
-			clientSocket.emit("loginAck", "NOK")
+			clientSocket.emit("loginAck", "NOK") //Rispondo al client (c'è già un utente connesso)
 		}
 		else{
 			user.username = userInfo.username;
@@ -63,7 +63,7 @@ io.on('connection', function(clientSocket) {
 		let index = users.findIndex(function(item){
 			return (item.username == user.username)
 		})
-		users.splice(index, 1)
+		users.splice(index, 1) //Rimuove gli elementi dell'array a partire da una precisa posizione
 		log(' User ' + user.username + ' disconnected!');
     });
 });

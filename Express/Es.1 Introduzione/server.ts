@@ -1,13 +1,14 @@
 import express from "express";
 import * as fs from "fs";
 import * as http from "http";
-import * as body_parser from "body-parser";
+import * as body_parser from "body-parser"; 
 import { json } from "body-parser";
 //Import di Mongo
 import * as _mongodb from "mongodb";
 const mongoClient =_mongodb.MongoClient;
 //Connessione locale
 //const CONNECTIONSTRING="mongodb://127.0.0.1:27017";
+//Connessione remota
 const CONNECTIONSTRING="mongodb+srv://Fabio:admin@cluster0.mvh5b.mongodb.net/5B?retryWrites=true&w=majority";
 const DBNAME = "5B";
 let port: number=1337;
@@ -29,15 +30,16 @@ function init()
 }
 //Elenco delle route di tipo middleware
 //1.Log
-app.use("/",function(req,res,next){
+app.use("/",function(req,res,next){ //index.html è implicito
     console.log("----->"+req.method+":"+req.originalUrl);
-    next();
+    next(); //permette di passare al metodo "/" successivo
 });
 //2.Static route
+//dico ad express dove reperire le risorse statiche (index.html)
 app.use("/",express.static("./static")); //se non trova la risorsa, il next() avviene in automatico
 //3.Route di lettura dei parametri post
-app.use("/",body_parser.json());
-app.use("/",body_parser.urlencoded({"extended":true}));
+app.use("/",body_parser.json()); //Conversione dati in formato json
+app.use("/",body_parser.urlencoded({"extended":true})); //parsifico anche le richieste con application/x-www-form-urlencoded
 //4.Log parametri
 app.use("/",function(req,res,next){
     //Controllo se ci sono delle chiavi, se sì faccio il console.log
@@ -47,7 +49,7 @@ app.use("/",function(req,res,next){
         console.log("          Parametri BODY: ",req.body);
     next();
 })
-//Route della creazione della connessione: tutti i listeners fanno 2 cose alternative(next() o risponde al client)
+//Route della creazione della connessione con il db: tutti i listeners fanno 2 cose alternative(next() o risponde al client)
 app.use("/",function(req,res,next){
     mongoClient.connect(CONNECTIONSTRING,function(err,client){
         if(err) 
@@ -110,8 +112,8 @@ app.patch("/api/risorsa2",function(req,res){
 });
 //7
 app.get("/api/risorsa3/:gender/:hair",function(req,res){
-    let gender=req.body.gender;
-    let hair=req.body.hair;
+    let gender=req.params.gender;
+    let hair=req.params.hair;
     //La if sull'esistenza dei parametri in questo caso non serve, perchè se mancano dei parametri non entra manco nella route
     let db = req["client"].db(DBNAME) as _mongodb.Db; 
     let collection = db.collection("Unicorns");

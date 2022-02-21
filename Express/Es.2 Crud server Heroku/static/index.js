@@ -13,7 +13,7 @@ $(document).ready(function() {
     //console.log(collections);
     let label = divCollections.children("label");
     for (const collection of collections) {
-      let clone = label.clone();
+      let clone = label.clone(); //clona il tag specificato
       clone.appendTo(divCollections);
       clone.children("input").val(collection.name);
       clone.children("span").text(collection.name);
@@ -28,6 +28,7 @@ $(document).ready(function() {
     request.done(disegnaTabella)
   });
   function disegnaTabella(data){
+      // Cerco i tag <strong></strong> che mettono in grassetto
       divIntestazione.find("strong").eq(0).text(currentCollection);
       divIntestazione.find("strong").eq(1).text(data.length);
       if(currentCollection == "unicorns"){
@@ -87,7 +88,7 @@ $(document).ready(function() {
         let txtArea = $("<textarea>");
         //rimuoviamo id perché non deve essere cambiato 
         delete(data._id);
-        txtArea.val(JSON.stringify(data, null, 2));
+        txtArea.val(JSON.stringify(data, null, 2)); //2 --> spazi
         txtArea.appendTo(divDettagli);
         //ridimensionamento della textarea in base al contenuto
         //ScrollHeight è una property js che restituisce l'altezza della textarea
@@ -129,10 +130,10 @@ $(document).ready(function() {
   });
   function aggiorna(){
     //divCollections.trigger("click","input[type=radio]");
-    var event = jQuery.Event('click');
-    event.target = divCollections.find('input[type=radio]:checked')[0];
-    divCollections.trigger(event);
-    divDettagli.empty();
+    var event = jQuery.Event('click'); //assegno l'evento click
+    event.target = divCollections.find('input[type=radio]:checked')[0]; //identifico l'elemento che ha scaturito il click
+    divCollections.trigger(event);//richiama la funzione assegnata al click
+    divDettagli.empty(); // rimuove i tag dall'elemento
   }
   $("#btnFind").on("click", function(){
 		let filterJson = {}
