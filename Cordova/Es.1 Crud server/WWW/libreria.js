@@ -1,3 +1,4 @@
+const URL="https://fabio-cavallero-crud-server.herokuapp.com";
 function inviaRichiesta(method, url, parameters = {}) {
     let contentType;
     if (method.toUpperCase() == "GET") {
@@ -7,7 +8,6 @@ function inviaRichiesta(method, url, parameters = {}) {
         contentType = "application/json; charset=utf-8"
         parameters = JSON.stringify(parameters);
     }
-
     return $.ajax({
         url: url, //default: currentPage
         type: method,
@@ -17,9 +17,6 @@ function inviaRichiesta(method, url, parameters = {}) {
         timeout: 5000,
     });
 }
-
-
-
 function errore(jqXHR, testStatus, strError) {
     if (jqXHR.status == 0)
         alert("Connection refused or Server timeout");
