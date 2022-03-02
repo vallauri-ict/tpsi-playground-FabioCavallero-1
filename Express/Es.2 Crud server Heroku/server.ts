@@ -18,7 +18,7 @@ server.listen(port, function () {
 	console.log("Server in ascolto sulla porta " + port);
 	init();
 });
-const whitelist = [
+/*const whitelist = [
 	"http://localhost:4200", //Angular
 	"http://localhost:1337", //Locale
 	"https://fabio-cavallero-crud-server.herokuapp.com", //Eroku con https
@@ -36,7 +36,15 @@ const corsOptions = {
 	},
 	credentials: true,
 };
-app.use("/", cors(corsOptions));
+app.use("/", cors(corsOptions));*/
+//Apertura delle restrinzioni cors a qualunque client
+const corsOptions = {
+	origin: function(origin, callback) {
+	return callback(null, true);
+	},
+	credentials: true
+   };
+   app.use("/", cors(corsOptions));
 let paginaErrore = "";
 function init() {
 	fs.readFile("./static/error.html", function (err, data) {
@@ -198,5 +206,5 @@ app.use("/", function (req, res, next) {
 });
 //Route di gestione degli errori
 app.use("/", function (err, req, res, next) {
-	console.log("**************** ERRORE CODICE SERVER ",err.message," **************");
+	console.log("**************** ERRORE CODICE SERVER ",err.stack," **************");
 });
