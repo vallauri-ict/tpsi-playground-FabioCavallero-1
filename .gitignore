@@ -367,5 +367,6 @@ environment.json
 # Dependency directories
 node_modules/
 jspm_packages/
-environment.json/
+environment.json
+environment.js
 keys/
