@@ -2,8 +2,7 @@
 
 _Stud. Fabio Cavallero_
 
-### Es.3 Geolocation
+### Es.6 Fotocamera
 
-Esecuzione da telefono o emulatore di un'applicazione che si basa sul servizio di Geolocation.
-
+Esecuzione da telefono o emulatore di un'applicazione che si basa sull'utilizzo di una fotocamera.
 
