@@ -1,0 +1,22 @@
+{
+  "prepare_queue": {
+    "installed": [],
+    "uninstalled": []
+  },
+  "config_munge": {
+    "files": {}
+  },
+  "installed_plugins": {
+    "cordova-plugin-dialogs": {
+      "PACKAGE_NAME": "edu.vallauri.fotocamera"
+    },
+    "cordova-plugin-splashscreen": {
+      "PACKAGE_NAME": "edu.vallauri.fotocamera"
+    },
+    "cordova-plugin-camera": {
+      "ANDROIDX_CORE_VERSION": "1.6.+",
+      "PACKAGE_NAME": "edu.vallauri.fotocamera"
+    }
+  },
+  "dependent_plugins": {}
+}
