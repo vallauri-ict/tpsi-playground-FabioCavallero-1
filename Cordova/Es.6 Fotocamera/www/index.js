@@ -12,6 +12,7 @@ $(document).ready(function() {
 		   quality: 50,
 		// destinationType: Camera.DestinationType.FILE_URI,
 		   destinationType: Camera.DestinationType.DATA_URL, 
+		   correctOrientation:true
 	}
     
 
