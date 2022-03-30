@@ -1,0 +1,124 @@
+"use strict"
+// ***************************** Librerie *************************************
+import fs from "fs";
+import http from "http";
+import https from "https";
+import express, { application } from "express";
+import body_parser from "body-parser"; //Per intercettare i parametri nel body
+//Il server di default risponde solo alle richieste provenienti da pagine scaricate dal server stesso
+import cors from "cors"; //Fa sì che il server risponda solo alle Url indicate all'interno della whitelist
+import fileUpload, { UploadedFile } from "express-fileupload";
+import cloudinary, { UploadApiResponse } from "cloudinary";
+import {Db, MongoClient, ObjectId}  from "mongodb";
+import bcrypt from "bcryptjs" //Per la cifratura bcrypt
+import jwt from "jsonwebtoken"//Gestione web token
+import environment from "./environment.json"
+// ***************************** Costanti *************************************
+const app = express();
+const CONNECTION_STRING = environment.CONNECTION_STRING_ATLAS
+const DBNAME = "5B"
+const DURATA_TOKEN = 60 // sec
+const HTTP_PORT = 1337
+const HTTPS_PORT = 1338
+const privateKey = fs.readFileSync("keys/privateKey.pem", "utf8");
+const certificate = fs.readFileSync("keys/certificate.crt", "utf8");
+const credentials = { "key": privateKey, "cert": certificate };
+cloudinary.v2.config({
+	cloud_name: environment.CLOUDINARY.CLOUD_NAME,
+	api_key: environment.CLOUDINARY.API_KEY,
+	api_secret: environment.CLOUDINARY.API_SECRET,
+})
+// ***************************** Avvio ****************************************
+const httpsServer = https.createServer(credentials, app);
+httpsServer.listen(HTTPS_PORT, function() {
+    console.log("Server HTTPS in ascolto sulla porta " + HTTPS_PORT);
+    init();
+});
+let paginaErrore = "";
+function init() {
+    fs.readFile("./static/error.html", function(err, data) {
+        if (!err)
+            paginaErrore = data.toString();
+        else
+            paginaErrore = "<h1>Risorsa non trovata</h1>"
+    });
+}
+// app.response.log = function(err){console.log(`*** Error *** ${err.message}`)}
+app.response["log"] = function(err){console.log(`*** Error *** ${err.message}`)}
+/* *********************** (Sezione 1) Middleware ********************* */
+// 1. Request log
+app.use("/", function(req, res, next) {
+    console.log("** " + req.method + " ** : " + req.originalUrl);
+    next();
+});
+// 2 - route risorse statiche
+app.use("/", express.static('./static'));
+// 3 - routes di lettura dei parametri post
+app.use("/", body_parser.json({ "limit": "10mb" }));
+app.use("/", body_parser.urlencoded({"extended": true, "limit": "10mb"}));
+// 4 - log dei parametri 
+app.use("/", function(req, res, next) {
+    if (Object.keys(req.query).length > 0)
+        console.log("        Parametri GET: ", req.query)
+    if (Object.keys(req.body).length != 0)
+        console.log("        Parametri BODY: ", req.body)
+    next();
+});
+// 5. cors accepting every call
+const corsOptions = {
+    origin: function(origin, callback) {
+          return callback(null, true);
+    },
+    credentials: true
+};
+app.use("/", cors(corsOptions));
+// 6 - binary upload
+app.use("/", fileUpload({
+    "limits": { "fileSize": (10 * 1024 * 1024) } // 10*1024*1024 // 10 M
+}));
+/* ***************** (Sezione 2) middleware relativi a JWT ****************** */
+//Gestione login
+app.post("/api/login",function(req,res,next){
+    MongoClient.connect(CONNECTION_STRING, function(err,client){
+        if(err){
+            res.status(501).send("Errore connessione al database")["log"](err); //Log dell'errore
+        }
+        else
+        {
+            const DB=client.db(DBNAME);
+            const collection= DB.collection("Mail-JWT");
+            let username= req.body.username;
+            collection.findOne({"username":username},function(err,dbUser){
+                if(err){
+                    res.status(500).send("Errore esecuzione query")["log"](err); //Log dell'errore
+                }
+                else
+                {
+                    if(dbUser)
+                    {
+                        if(req.body.password==dbUser.password)
+                        {
+
+                        }
+                    }
+                    else
+                        res.status(400).send("Username o password errati")["log"](err); //Log dell'errore
+                }
+            })
+        }
+    })
+})
+/* ********************** (Sezione 3) USER ROUTES  ************************** */
+/* ***************** (Sezione 4) DEFAULT ROUTE and ERRORS ******************* */
+// gestione degli errori
+app.use(function(err, req, res, next) {
+    console.log(err.stack); // stack completo    
+});
+// default route
+app.use('/', function(req, res, next) {
+    res.status(404)
+    if (req.originalUrl.startsWith("/api/")) {
+        res.send("Risorsa non trovata");
+    }
+	else res.send(paginaErrore);
+});
