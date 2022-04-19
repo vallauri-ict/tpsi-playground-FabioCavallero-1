@@ -3,7 +3,7 @@
 import fs from "fs";
 import http from "http";
 import https from "https";
-import express, { application } from "express";
+import express, { application, request } from "express";
 import body_parser from "body-parser"; //Per intercettare i parametri nel body
 //Il server di default risponde solo alle richieste provenienti da pagine scaricate dal server stesso
 import cors from "cors"; //Fa sì che il server risponda solo alle Url indicate all'interno della whitelist
@@ -13,7 +13,7 @@ import {Db, MongoClient, ObjectId}  from "mongodb";
 import bcrypt from "bcryptjs" //Per la cifratura bcrypt
 import jwt from "jsonwebtoken"//Gestione web token
 import environment from "./environment.json"
-// ***************************** Costanti *************************************
+import { createToken, getDefaultLibFileName } from "typescript";// ***************************** Costanti *************************************
 const app = express();
 const CONNECTION_STRING = environment.CONNECTION_STRING_ATLAS
 const DBNAME = "5B"
@@ -22,6 +22,7 @@ const HTTP_PORT = 1337
 const HTTPS_PORT = 1338
 const privateKey = fs.readFileSync("keys/privateKey.pem", "utf8");
 const certificate = fs.readFileSync("keys/certificate.crt", "utf8");
+const jwtKey = fs.readFileSync("keys/jwtKey.pem", "utf8");
 const credentials = { "key": privateKey, "cert": certificate };
 cloudinary.v2.config({
 	cloud_name: environment.CLOUDINARY.CLOUD_NAME,
@@ -88,6 +89,8 @@ app.post("/api/login",function(req,res,next){
             const DB=client.db(DBNAME);
             const collection= DB.collection("Mail-JWT");
             let username= req.body.username;
+            //Controllo case unsensitive
+            let regex=new RegExp("^"+username+"$","i");
             collection.findOne({"username":username},function(err,dbUser){
                 if(err){
                     res.status(500).send("Errore esecuzione query")["log"](err); //Log dell'errore
@@ -96,19 +99,114 @@ app.post("/api/login",function(req,res,next){
                 {
                     if(dbUser)
                     {
-                        if(req.body.password==dbUser.password)
+                        if(req.body.password)
                         {
-
+                            if(bcrypt.compareSync(req.body.password, dbUser.password)){
+                                let token= creaToken(dbUser);
+                                res.setHeader("Authorization",token);
+                                res.send({"Ris":"Ok"});
+                            }
+                            else{
+                                res.status(401).send("Password non valida");
+                            }
+                        }
+                        else
+                        {
+                            res.status(401).send("Password mancante");
                         }
                     }
                     else
-                        res.status(400).send("Username o password errati")["log"](err); //Log dell'errore
+                        res.status(401).send("Username non valido"); //Log dell'errore
                 }
             })
         }
     })
 })
+function creaToken(dbUser){
+    let data=Math.floor((new Date()).getTime() / 1000);//GetTime restituisce i millisecondi, dividendo per 1000
+    let payload={
+        "_id": dbUser._id,
+        "username": dbUser.username,
+        "iat":dbUser.iat || data,
+        "exp":data+DURATA_TOKEN
+    }
+    return jwt.sign(payload,jwtKey);
+}
 /* ********************** (Sezione 3) USER ROUTES  ************************** */
+app.use("/api/",function(req,res,next){
+    let token;
+    if(req.headers.authorization){
+        token=req.headers.authorization;
+        //JWT.verify inietta il payload del token alla funzione di callback
+        jwt.verify(token, jwtKey, function(err,payload){
+            if(err)
+                res.status(403).send("Unauthorized: token non valido");
+            else
+            {
+                let newToken = creaToken(payload);
+                res.setHeader("authorization",newToken);
+                req["payload"]=payload;
+                next();
+            }
+        })
+    }
+    else
+    {
+        res.status(403).send("Token assente");
+    }
+})
+//Gestione elencoMail
+app.get("/api/elencoMail",function(req,res,next){
+    MongoClient.connect(CONNECTION_STRING,function(err,client){
+        if(err)
+            res.status(503).send("Errore connessione al database");
+        else
+        {
+            const db=client.db(DBNAME);
+            const collection=db.collection("Mail-JWT");
+            const _id=req["payload"]._id;
+            let oId=new ObjectId(_id);
+            let request=collection.findOne({"_id":oId})
+            request.then(function(data){
+                res.send(data.mail.reverse());
+            })
+            request.catch(function(data){
+                res.status(500).send("Errore esecuzione query");
+            })
+            request.finally(function(){
+                client.close();
+            })
+        }
+    })
+})
+//Gestione newMail
+app.post("/api/newMail",function(req,res,next){
+    MongoClient.connect(CONNECTION_STRING,function(err,client){
+        if(err)
+            res.status(503).send("Errore connessione al database");
+        else
+        {
+            const db=client.db(DBNAME);
+            const collection=db.collection("Mail-JWT");
+            let mittente=req["payload"].username;
+            let mail={
+                "from":mittente,
+                "subject":req.body.subject,
+                "body":req.body.message
+            }
+            let request=collection.updateOne({"username":req.body.to},{$push:{"mail":mail}})
+            request.then(function(data){
+                res.send({"ris":"ok"});
+            })
+            request.catch(function(data){
+                res.status(500).send("Errore esecuzione query");
+            })
+            request.finally(function(){
+                client.close();
+            })
+        }
+    })
+})
 /* ***************** (Sezione 4) DEFAULT ROUTE and ERRORS ******************* */
 // gestione degli errori
 app.use(function(err, req, res, next) {

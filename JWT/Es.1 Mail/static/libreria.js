@@ -7,7 +7,6 @@ function inviaRichiesta(method, url, parameters = {}) {
         contentType = "application/json; charset=utf-8"
         parameters = JSON.stringify(parameters);
     }
-
     return $.ajax({
         url: url, //default: currentPage
         type: method,
@@ -15,21 +14,20 @@ function inviaRichiesta(method, url, parameters = {}) {
         contentType: contentType,
         dataType: "json",
         timeout: 5000,
+        //Prima di spedire la richiesta al server, recupera il token da localstorage
 		beforeSend: function(jqXHR) {
 		   if ("token" in localStorage) {
 				let token = localStorage.getItem("token");  
 				jqXHR.setRequestHeader("Authorization", token);
 		   }
 		},
+        //Dopo aver ricevuto il token dal server, quest'ultimo viene salvato su localstorage
 		success: function(data, textStatus, jqXHR){
 			let token = jqXHR.getResponseHeader('Authorization')
 			localStorage.setItem("token", token)  
 		}
     });
 }
-
-
-
 function errore(jqXHR, testStatus, strError) {
     if (jqXHR.status == 0)
         alert("Connection refused or Server timeout");
