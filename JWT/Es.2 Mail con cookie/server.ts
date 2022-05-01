@@ -91,7 +91,7 @@ app.post("/api/login",function(req,res,next){
             let username= req.body.username;
             //Controllo case unsensitive
             let regex=new RegExp("^"+username+"$","i");
-            collection.findOne({"username":username},function(err,dbUser){
+            collection.findOne({"username":regex},function(err,dbUser){
                 if(err){
                     res.status(500).send("Errore esecuzione query")["log"](err); //Log dell'errore
                 }
@@ -103,7 +103,8 @@ app.post("/api/login",function(req,res,next){
                         {
                             if(bcrypt.compareSync(req.body.password, dbUser.password)){
                                 let token= creaToken(dbUser);
-                                res.setHeader("Authorization",token);
+                                //res.setHeader("Authorization",token);
+                                writeCookie(res, token);
                                 res.send({"Ris":"Ok"});
                             }
                             else{
@@ -127,16 +128,15 @@ function creaToken(dbUser){
     let payload={
         "_id": dbUser._id,
         "username": dbUser.username,
-        "iat":dbUser.iat || data,
+        "iat":dbUser.iat || data,   //initial authentication time
         "exp":data+DURATA_TOKEN
     }
     return jwt.sign(payload,jwtKey);
 }
 /* ********************** (Sezione 3) USER ROUTES  ************************** */
 app.use("/api/",function(req,res,next){
-    let token;
-    if(req.headers.authorization){
-        token=req.headers.authorization;
+    let token= readCookie(req);
+    if(token !=""){
         //JWT.verify inietta il payload del token alla funzione di callback
         jwt.verify(token, jwtKey, function(err,payload){
             if(err)
@@ -144,7 +144,8 @@ app.use("/api/",function(req,res,next){
             else
             {
                 let newToken = creaToken(payload);
-                res.setHeader("authorization",newToken);
+                //res.setHeader("authorization",newToken);
+                writeCookie(res, newToken);
                 req["payload"]=payload;
                 next();
             }
@@ -154,6 +155,34 @@ app.use("/api/",function(req,res,next){
     {
         res.status(403).send("Token assente");
     }
+})
+function readCookie(req){
+    let token="";
+    if(req.headers.cookie){
+        let cookie=req.headers.cookie.split(';');
+        for (let item of cookie) {
+            item=item.split('=');
+            if(item[0].trim()=="token"){
+                token=item[1];
+                break;
+            }
+        }
+    }
+    return token;
+}
+function writeCookie(res, token){
+    //HttpOnly=true -> Fa in modo che i cookie non siano accessibili da Js ma solo da Http
+    //Secure=true -> Accesso solo con Https
+    //SameSite=false -> Il token viene reso visibile anche su richieste provenienti da pagine non inviate dal server
+    let cookie=`token=${token};Max-age=${DURATA_TOKEN};Path=/;HttpOnly=true;Secure=true;SameSite=false;`
+    res.setHeader("Set-Cookie",cookie);
+}
+//Sezione 3 USER ROUTES
+//Gestione logout
+app.post("/api/logout",function(req,res,next){
+    let cookie=`token='';Max-age=-1;Path=/;HttpOnly=true;Secure=true;SameSite=false;`
+    res.setHeader("Set-Cookie",cookie);
+    res.send({"ris":"ok"}); //Il send serializza lui, quindi non c'è bisogno del .stringify
 })
 //Gestione elencoMail
 app.get("/api/elencoMail",function(req,res,next){
