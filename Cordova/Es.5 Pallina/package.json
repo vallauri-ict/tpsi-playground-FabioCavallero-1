@@ -13,11 +13,9 @@
   "author": "Apache Cordova Team",
   "license": "Apache-2.0",
   "devDependencies": {
-    "cordova-android": "^10.1.1",
-    "cordova-plugin-device": "^2.0.3",
+    "cordova-android": "^10.1.2",
     "cordova-plugin-device-motion": "^2.0.1",
-    "cordova-plugin-dialogs": "^2.0.2",
-    "motion": "^10.7.0"
+    "cordova-plugin-dialogs": "^2.0.2"
   },
   "cordova": {
     "platforms": [
@@ -25,7 +23,6 @@
     ],
     "plugins": {
       "cordova-plugin-dialogs": {},
-      "cordova-plugin-device": {},
       "cordova-plugin-device-motion": {}
     }
   }

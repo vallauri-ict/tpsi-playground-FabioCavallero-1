@@ -1,11 +1,4 @@
 {
-  "_args": [
-    [
-      "cordova-plugin-camera@6.0.0",
-      "C:\\Users\\Mary\\Desktop\\tpsi-playground-FabioCavallero-1\\Cordova\\Es.6 Fotocamera"
-    ]
-  ],
-  "_development": true,
   "_from": "cordova-plugin-camera@6.0.0",
   "_id": "cordova-plugin-camera@6.0.0",
   "_inBundle": false,
@@ -23,10 +16,12 @@
     "fetchSpec": "6.0.0"
   },
   "_requiredBy": [
-    "#DEV:/"
+    "#DEV:/",
+    "#USER"
   ],
   "_resolved": "https://registry.npmjs.org/cordova-plugin-camera/-/cordova-plugin-camera-6.0.0.tgz",
-  "_spec": "6.0.0",
+  "_shasum": "083478c92cfaa59435326b5a2a28c56fa75ffdd5",
+  "_spec": "cordova-plugin-camera@6.0.0",
   "_where": "C:\\Users\\Mary\\Desktop\\tpsi-playground-FabioCavallero-1\\Cordova\\Es.6 Fotocamera",
   "author": {
     "name": "Apache Software Foundation"
@@ -34,6 +29,7 @@
   "bugs": {
     "url": "https://github.com/apache/cordova-plugin-camera/issues"
   },
+  "bundleDependencies": false,
   "cordova": {
     "id": "cordova-plugin-camera",
     "platforms": [
@@ -44,6 +40,7 @@
       "osx"
     ]
   },
+  "deprecated": false,
   "description": "Cordova Camera Plugin",
   "devDependencies": {
     "@cordova/eslint-config": "^3.0.0"
